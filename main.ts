@@ -197,7 +197,6 @@ namespace CBreedingBox {
     })
 
     function setData() {
-        let na = 0
         tsSendStr = "AT+HTTPCLIENT=2,0,\"http://api.thingspeak.com/update?api_key="
             + thingspeak_writekey
             + "&field1="
@@ -208,14 +207,6 @@ namespace CBreedingBox {
             + HUMIDITY
             + "&field4="
             + TEMPERATURE
-            + "&field5="
-            + na
-            + "&field6="
-            + na
-            + "&field7="
-            + na
-            + "&field8="
-            + na
             + "\",,,1"
     }
 
