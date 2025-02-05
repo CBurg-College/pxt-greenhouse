@@ -51,7 +51,8 @@ namespace CBreedingBox {
 
     let wifi_connected: boolean = false
     let thingspeak_connected: boolean = false
-    let thingSpeakDatatemp = ""
+    let thingspeak_writekey = ""
+    let thingspeak_readkey = ""
 
     let serialCnt = 0
     let recvString = ""
@@ -195,25 +196,26 @@ namespace CBreedingBox {
         }
     })
 
-    function setData(write_api_key: string, n1: number = 0, n2: number = 0, n3: number = 0, n4: number = 0, n5: number = 0, n6: number = 0, n7: number = 0, n8: number = 0) {
+    function setData() {
+        let na = 0
         tsSendStr = "AT+HTTPCLIENT=2,0,\"http://api.thingspeak.com/update?api_key="
-            + write_api_key
+            + thingspeak_writekey
             + "&field1="
-            + n1
+            + MOISTURE
             + "&field2="
-            + n2
+            + LIGHT
             + "&field3="
-            + n3
+            + HUMIDITY
             + "&field4="
-            + n4
+            + TEMPERATURE
             + "&field5="
-            + n5
+            + na
             + "&field6="
-            + n6
+            + na
             + "&field7="
-            + n7
+            + na
             + "&field8="
-            + n8
+            + na
             + "\",,,1"
     }
 
@@ -428,16 +430,25 @@ namespace CBreedingBox {
         return TEMPERATURE
     }
 
+    //% block="send to ThingSpeak"
+    //% block.loc.nl="verzend naar ThingSpeak"
+    export function thingspeak_Send() {
+        setData();
+        uploadData();
+    }
+
     //% block="connected to ThingSpeak"
     //% block.loc.nl="verbonden met ThingSpeak"
     export function thingSpeakConneced() : boolean {
         return (thingspeak_connected && wifi_connected)
     }
 
-    //% block="start via ssid %ssid and password %passw" using writekey %wkey and readkey %rkey"
-    //% block="start via ssid %ssid en wachtwoord %passw" met writekey %wkey and readkey %rkey"
+    //% block="start via ssid %ssid and password %passw using writekey %wkey and readkey %rkey"
+    //% block="start via ssid %ssid en wachtwoord %passw met writekey %wkey and readkey %rkey"
     export function connect(ssid: string, passw: string, wkey: string, rkey: string) {
         initWIFI()
         connectWIFI(ssid, passw)
+        thingspeak_writekey = wkey
+        thingspeak_readkey = rkey
     }
 }
