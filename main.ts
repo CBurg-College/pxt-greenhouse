@@ -171,7 +171,7 @@ namespace CBreedingBox {
     }
 
     //% block="perform a measurement"
-    //% block.loc.nl = "voer een meting uit"
+    //% block.loc.nl="voer een meting uit"
     export function measure() {
         let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
         LIGHT = Math.round(value)
@@ -191,7 +191,7 @@ namespace CBreedingBox {
     }
 
     //% block="moisture"
-    //% block.loc.nl = "grondvochtigheid"
+    //% block.loc.nl="grondvochtigheid"
     export function moisture(): number {
         return MOISTURE
     }
