@@ -178,6 +178,18 @@ namespace CBreedingBox {
         getBME280()
     }
 
+    //% block="air pressure"
+    //% block.loc.nl="luchtdruk"
+    export function pressure(): number {
+        return PRESSURE
+    }
+
+    //% block="amount of light"
+    //% block.loc.nl="hoeveelheid licht"
+    export function light(): number {
+        return LIGHT
+    }
+
     //% block="moisture"
     //% block.loc.nl = "grondvochtigheid"
     export function moisture(): number {
@@ -185,27 +197,15 @@ namespace CBreedingBox {
     }
 
     //% block="humidity"
-    //% block.loc.nl = "luchtvochtigheid"
+    //% block.loc.nl="luchtvochtigheid"
     export function humidity(): number {
         return HUMIDITY
     }
 
     //% block="temperature"
-    //% block.loc.nl = "temperatuur"
+    //% block.loc.nl="temperatuur"
     export function temperature(): number {
         return TEMPERATURE
-    }
-
-    //% block="amount of light"
-    //% block.loc.nl = "hoeveelheid licht"
-    export function light(): number {
-        return LIGHT
-    }
-
-    //% block="air pressure"
-    //% block.loc.nl = "luchtdruk"
-    export function pressure(): number {
-        return PRESSURE
     }
 
 }
