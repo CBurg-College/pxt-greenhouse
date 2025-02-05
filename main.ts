@@ -77,7 +77,7 @@ namespace CBreedingBox {
     }
 
     function initWIFI() {
-        serial.redirect(SerialPin.P12, SerialPin.P8, BaudRate.BaudRate115200)
+        serial.redirect(SerialPin.P8, SerialPin.P12, BaudRate.BaudRate115200)
         basic.pause(100)
         serial.setTxBufferSize(128)
         serial.setRxBufferSize(128)
