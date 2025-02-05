@@ -434,11 +434,14 @@ namespace CBreedingBox {
         return (thingspeak_connected && wifi_connected)
     }
 
-    //% block="start via ssid %ssid and password %passw using writekey %wkey and readkey %rkey"
-    //% block="start via ssid %ssid en wachtwoord %passw met writekey %wkey and readkey %rkey"
+    //% block="ssid %ssid password %passw writekey %wkey readkey %rkey"
+    //% block="ssid %ssid wachtwoord %passw writekey %wkey readkey %rkey"
     export function connect(ssid: string, passw: string, wkey: string, rkey: string) {
+basic.showString("A")
         initWIFI()
+basic.showString("B")
         connectWIFI(ssid, passw)
+basic.showString("C")
         thingspeak_writekey = wkey
         thingspeak_readkey = rkey
     }
