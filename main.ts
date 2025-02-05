@@ -172,7 +172,7 @@ namespace CBreedingBox {
 
     //% block="perform a measurement"
     //% block.loc.nl = "voer een meting uit"
-    function measure() {
+    export function measure() {
         let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
         LIGHT = Math.round(value)
         getBME280()
@@ -180,31 +180,31 @@ namespace CBreedingBox {
 
     //% block="moisture"
     //% block.loc.nl = "grondvochtigheid"
-    function moisture(): number {
+    export function moisture(): number {
         return MOISTURE
     }
 
     //% block="humidity"
     //% block.loc.nl = "luchtvochtigheid"
-    function humidity(): number {
+    export function humidity(): number {
         return HUMIDITY
     }
 
     //% block="temperature"
     //% block.loc.nl = "temperatuur"
-    function temperature(): number {
+    export function temperature(): number {
         return TEMPERATURE
     }
 
     //% block="amount of light"
     //% block.loc.nl = "hoeveelheid licht"
-    function light(): number {
+    export function light(): number {
         return LIGHT
     }
 
     //% block="air pressure"
     //% block.loc.nl = "luchtdruk"
-    function pressure(): number {
+    export function pressure(): number {
         return PRESSURE
     }
 
