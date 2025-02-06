@@ -125,6 +125,7 @@ namespace CBreedingBox {
     }
 
     function connectWIFI(ssid: string, pw: string) {
+basic.showString("A")
         while (1) {
             scanWIFIAP(ssid)
             if (scanWIFIAPFlag) {
@@ -134,20 +135,25 @@ namespace CBreedingBox {
                 while (!wifi_connected) {
                     restEsp8266()
                     sendAT(`AT+CWJAP="${ssid}","${pw}"`)
+basic.showString("B")
                     control.waitForEvent(EspEventSource, EspEventValue.ConnectWifi)
+basic.showString("C")
                 }
                 break
             } else {
                 restEsp8266()
                 currentCmd = Cmd.ConnectWifi
                 sendAT(`AT+CWJAP="${ssid}","${pw}"`)
+basic.showString("D")
                 control.waitForEvent(EspEventSource, EspEventValue.ConnectWifi)
+basic.showString("E")
                 if (wifi_connected) {
                     break
                 }
             }
         }
         thingspeak_connected = true
+basic.showString("F")
     }
 
     serial.onDataReceived(serial.delimiters(Delimiters.NewLine), function () {
@@ -437,11 +443,8 @@ namespace CBreedingBox {
     //% block="ssid %ssid password %passw writekey %wkey readkey %rkey"
     //% block="ssid %ssid wachtwoord %passw writekey %wkey readkey %rkey"
     export function connect(ssid: string, passw: string, wkey: string, rkey: string) {
-basic.showString("A")
         initWIFI()
-basic.showString("B")
         connectWIFI(ssid, passw)
-basic.showString("C")
         thingspeak_writekey = wkey
         thingspeak_readkey = rkey
     }
