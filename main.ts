@@ -867,11 +867,19 @@ namespace CTimer {
 //% block.loc.nl="Dashboard"
 namespace CDashboard {
 
+    let SSID = ""
+    let PASSWORD = ""
     let WRITEKEY = ""
     let READKEY = ""
 
-    //% block="send to ThingSpeak"
-    //% block.loc.nl="verzend naar ThingSpeak"
+    export enum Dashboard {
+        //% block="ThingSpeak"
+        //% block.loc.nl="ThingSpeak"
+        ThingSpeak
+    }
+
+    //% block="send to the dashboard"
+    //% block.loc.nl="verzend naar het dashboard"
     export function thingspeak_Send() {
         ESP8266.setData(WRITEKEY,
             CBreedingBox.MOISTURE,
@@ -882,18 +890,29 @@ namespace CDashboard {
         ESP8266.uploadData();
     }
 
-    //% block="connected to ThingSpeak"
-    //% block.loc.nl="verbonden met ThingSpeak"
+    //% block="connected to the dashboard"
+    //% block.loc.nl="verbonden met het dashboard"
     export function thingSpeakConneced(): boolean {
         return ESP8266.thingSpeakState(true)
     }
 
     //% block="wifi ssid %ssid wifi password %passw dashboard writekey %wkey dashboard readkey %rkey"
-    //% block="wifi ssid %ssid wifi wachtwoord %passw dashboard writekey %wkey dashboard readkey %rkey"
-    export function connect(ssid: string, passw: string, wkey: string, rkey: string) {
+    //% block="verbind met %dashb"
+    export function connect(dashb:Dashboard) {
         ESP8266.initWIFI(SerialPin.P8, SerialPin.P12, BaudRate.BaudRate115200)
-        ESP8266.connectWifi(ssid, passw)
-        ESP8266.connectThingSpeak()
+        ESP8266.connectWifi(SSID, PASSWORD)
+        switch (dashb) {
+            case Dashboard.ThingSpeak:
+                ESP8266.connectThingSpeak()
+                break;
+        }
+    }
+
+    //% block="wifi ssid %ssid wifi password %passw dashboard writekey %wkey dashboard readkey %rkey"
+    //% block="wifi ssid %ssid wifi wachtwoord %passw dashboard writekey %wkey dashboard readkey %rkey"
+    export function setcredentials(ssid: string, passw: string, wkey: string, rkey: string) {
+        SSID = ssid
+        PASSWORD = passw
         WRITEKEY = wkey
         READKEY = rkey
     }
