@@ -801,7 +801,7 @@ namespace CBreedingBox {
 //% color="#00CC00" icon="\uf1f9"
 //% block="Time"
 //% block.loc.nl="Tijd"
-namespace Timer {
+namespace CTimer {
 
     //% block="wait %time sec"
     //% block.loc.nl="wacht %time sec"
