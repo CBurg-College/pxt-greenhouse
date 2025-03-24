@@ -588,14 +588,11 @@ namespace CBreedingBox {
 
     let PIN_LIGHT = DigitalPin.P1
 
-    let WRITEKEY = ""
-    let READKEY = ""
-
-    let MOISTURE : number = 0
-    let HUMIDITY : number = 0
-    let TEMPERATURE : number = 0
-    let LIGHT : number = 0
-    let PRESSURE : number = 0
+    export let MOISTURE : number = 0
+    export let HUMIDITY : number = 0
+    export let TEMPERATURE : number = 0
+    export let LIGHT : number = 0
+    export let PRESSURE : number = 0
 
     ////////////
     // BME280 //
@@ -773,29 +770,6 @@ namespace CBreedingBox {
     export function temperature(): number {
         return TEMPERATURE
     }
-
-    //% block="send to ThingSpeak"
-    //% block.loc.nl="verzend naar ThingSpeak"
-    export function thingspeak_Send() {
-        ESP8266.setData(WRITEKEY, MOISTURE, LIGHT, HUMIDITY, TEMPERATURE);
-        ESP8266.uploadData();
-    }
-
-    //% block="connected to ThingSpeak"
-    //% block.loc.nl="verbonden met ThingSpeak"
-    export function thingSpeakConneced() : boolean {
-        return ESP8266.thingSpeakState(true)
-    }
-
-    //% block="ssid %ssid password %passw writekey %wkey readkey %rkey"
-    //% block="ssid %ssid wachtwoord %passw writekey %wkey readkey %rkey"
-    export function connect(ssid: string, passw: string, wkey: string, rkey: string) {
-        ESP8266.initWIFI(SerialPin.P8, SerialPin.P12, BaudRate.BaudRate115200)
-        ESP8266.connectWifi(ssid, passw)
-        ESP8266.connectThingSpeak()
-        WRITEKEY = wkey
-        READKEY = rkey
-    }
 }
 
 //% color="#00CC00" icon="\uf1f9"
@@ -886,4 +860,41 @@ namespace CTimer {
         })
     }
 
+}
+
+//% color="#00CC00" icon="\uf1f9"
+//% block="ThingSpeak"
+//% block.loc.nl="ThingSpeak"
+namespace CThingSpeak {
+
+    let WRITEKEY = ""
+    let READKEY = ""
+
+    //% block="send to ThingSpeak"
+    //% block.loc.nl="verzend naar ThingSpeak"
+    export function thingspeak_Send() {
+        ESP8266.setData(WRITEKEY,
+            CBreedingBox.MOISTURE,
+            CBreedingBox.LIGHT,
+            CBreedingBox.HUMIDITY,
+            CBreedingBox.TEMPERATURE,
+            CBreedingBox.PRESSURE);
+        ESP8266.uploadData();
+    }
+
+    //% block="connected to ThingSpeak"
+    //% block.loc.nl="verbonden met ThingSpeak"
+    export function thingSpeakConneced(): boolean {
+        return ESP8266.thingSpeakState(true)
+    }
+
+    //% block="connect to ThingSpeak using: ssid %ssid password %passw writekey %wkey readkey %rkey"
+    //% block="verbind met ThingSpeak als volgt: ssid %ssid wachtwoord %passw writekey %wkey readkey %rkey"
+    export function connect(ssid: string, passw: string, wkey: string, rkey: string) {
+        ESP8266.initWIFI(SerialPin.P8, SerialPin.P12, BaudRate.BaudRate115200)
+        ESP8266.connectWifi(ssid, passw)
+        ESP8266.connectThingSpeak()
+        WRITEKEY = wkey
+        READKEY = rkey
+    }
 }
