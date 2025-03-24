@@ -153,11 +153,6 @@ namespace ESP8266 {
     /**
      * Initialize ESP8266 module
      */
-    //% block="set ESP8266|RX %tx|TX %rx|Baud rate %baudrate"
-    //% tx.defl=SerialPin.P8
-    //% rx.defl=SerialPin.P12
-    //% ssid.defl=your_ssid
-    //% pw.defl=your_password weight=100
     export function initWIFI(tx: SerialPin, rx: SerialPin, baudrate: BaudRate) {
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         basic.pause(100)
@@ -169,9 +164,6 @@ namespace ESP8266 {
     /**
      * connect to Wifi router
      */
-    //% block="connect Wifi SSID = %ssid|KEY = %pw"
-    //% ssid.defl=your_ssid
-    //% pw.defl=your_pwd weight=95
     export function connectWifi(ssid: string, pw: string) {
 
         while (1) {
@@ -202,7 +194,6 @@ namespace ESP8266 {
      * Warning: Deprecated.
      * Check if ESP8266 successfully connected to Wifi
      */
-    //% block="Wifi connected %State" weight=70
     export function wifiState(state: boolean) {
         return wifi_connected === state
     }
@@ -210,9 +201,6 @@ namespace ESP8266 {
     /**
      * Connect to ThingSpeak
      */
-    //% block="connect thingspeak"
-    //% write_api_key.defl=your_write_api_key
-    //% subcategory="ThingSpeak" weight=90
     export function connectThingSpeak() {
         thingspeak_connected = true
         // connect to server
@@ -234,10 +222,6 @@ namespace ESP8266 {
     /**
      * Connect to ThingSpeak and set data.
      */
-    //% block="set data to send ThingSpeak | Write API key = %write_api_key|Field 1 = %n1||Field 2 = %n2|Field 3 = %n3|Field 4 = %n4|Field 5 = %n5|Field 6 = %n6|Field 7 = %n7|Field 8 = %n8"
-    //% write_api_key.defl=your_write_api_key
-    //% expandableArgumentMode="enabled"
-    //% subcategory="ThingSpeak" weight=85
     export function setData(write_api_key: string, n1: number = 0, n2: number = 0, n3: number = 0, n4: number = 0, n5: number = 0, n6: number = 0, n7: number = 0, n8: number = 0) {
         TStoSendStr = "AT+HTTPCLIENT=2,0,\"http://api.thingspeak.com/update?api_key="
             + write_api_key
@@ -263,8 +247,6 @@ namespace ESP8266 {
     /**
      * upload data. It would not upload anything if it failed to connect to Wifi or ThingSpeak.
      */
-    //% block="Upload data to ThingSpeak"
-    //% subcategory="ThingSpeak" weight=80
     export function uploadData() {
         let mscnt = 0
         //sendAT(`AT+CIPSEND=${TStoSendStr.length + 2}`, 300)
@@ -291,8 +273,6 @@ namespace ESP8266 {
     /*
      * Check if ESP8266 successfully connected to ThingSpeak
      */
-    //% block="ThingSpeak connected %State"
-    //% subcategory="ThingSpeak" weight=65
     export function thingSpeakState(state: boolean) {
         return thingspeak_connected === state
     }
@@ -301,8 +281,6 @@ namespace ESP8266 {
     /*
      * Connect to smartiot
      */
-    //% subcategory=SmartIot weight=50
-    //% blockId=initsmartiot block="Connect SmartIot with userToken: %userToken Topic: %topic"
     export function connectSmartiot(userToken: string, topic: string): void {
         userToken_def = userToken
         topic_def = topic
@@ -324,8 +302,6 @@ namespace ESP8266 {
     /**
      * upload data to smartiot
      */
-    //% subcategory=SmartIot weight=45
-    //% blockId=uploadsmartiot block="Upload data %data to smartiot"
     export function uploadSmartiot(data: number): void {
         data = Math.floor(data)
         const jsonText = `{"topic":"${topic_def}","userToken":"${userToken_def}","op":"up","data":"${data}"}`
@@ -342,8 +318,6 @@ namespace ESP8266 {
     /*
      * disconnect from smartiot
      */
-    //% subcategory=SmartIot weight=40
-    //% blockId=Disconnect block="Disconnect with smartiot"
     export function disconnectSmartiot(): void {
         if (smartiot_connected) {
             const jsonText = `{"topic":"${topic_def}","userToken":"${userToken_def}","op":"close"}`
@@ -361,15 +335,10 @@ namespace ESP8266 {
     /*
      * Check if ESP8266 successfully connected to SmartIot
      */
-    //% block="SmartIot connection %State"
-    //% subcategory="SmartIot" weight=35
     export function smartiotState(state: boolean) {
         return smartiot_connected === state
     }
 
-    //% block="When switch %vocabulary"
-    //% subcategory="SmartIot" weight=30
-    //% state.fieldEditor="gridpicker" state.fieldOptions.columns=2
     export function iotSwitchEvent(state: SmartIotSwitchState, handler: () => void) {
         control.onEvent(SmartIotEventSource, state, handler)
     }
@@ -378,8 +347,6 @@ namespace ESP8266 {
     /*
      * Set  MQTT client
      */
-    //% subcategory=MQTT weight=30
-    //% blockId=initMQTT block="Set MQTT client config|scheme: %scheme clientID: %clientID username: %username password: %password path: %path"
     export function setMQTT(scheme: SchemeList, clientID: string, username: string, password: string, path: string): void {
         sendAT(`AT+MQTTUSERCFG=0,${scheme},"${clientID}","${username}","${password}",0,0,"${path}"`, 1000)
     }
@@ -387,8 +354,6 @@ namespace ESP8266 {
     /*
      * Connect to MQTT broker
      */
-    //% subcategory=MQTT weight=25
-    //% blockId=connectMQTT block="connect MQTT broker host: %host port: %port reconnect: $reconnect"
     export function connectMQTT(host: string, port: number, reconnect: boolean): void {
         mqtthost_def = host
         const rec = reconnect ? 0 : 1
@@ -404,8 +369,6 @@ namespace ESP8266 {
     /*
      * Check if ESP8266 successfully connected to mqtt broker
      */
-    //% block="MQTT broker is connected"
-    //% subcategory="MQTT" weight=24
     export function isMqttBrokerConnected() {
         return mqttBrokerConnected
     }
@@ -413,10 +376,6 @@ namespace ESP8266 {
     /*
      * send message
      */
-    //% subcategory=MQTT weight=21
-    //% blockId=sendMQTT block="publish %msg to Topic:%topic with Qos:%qos"
-    //% msg.defl=hello
-    //% topic.defl=topic/1
     export function publishMqttMessage(msg: string, topic: string, qos: QosList): void {
         sendAT(`AT+MQTTPUB=0,"${topic}","${msg}",${qos},0`, 1000)
         recvString = ""
@@ -425,16 +384,10 @@ namespace ESP8266 {
     /*
      * disconnect MQTT broker
      */
-    //% subcategory=MQTT weight=15
-    //% blockId=breakMQTT block="Disconnect from broker"
     export function breakMQTT(): void {
         sendAT("AT+MQTTCLEAN=0", 1000)
     }
 
-    //% block="when Topic: %topic have new $message with Qos: %qos"
-    //% subcategory=MQTT weight=10
-    //% draggableParameters
-    //% topic.defl=topic/1
     export function MqttEvent(topic: string, qos: QosList, handler: (message: string) => void) {
         mqttSubscribeHandlers[topic] = handler
         mqttSubscribeQos[topic] = qos
@@ -444,8 +397,6 @@ namespace ESP8266 {
     /*
      * set ifttt
      */
-    //% subcategory=IFTTT weight=9
-    //% blockId=setIFTTT block="set IFTTT key:%key event:%event"
     export function setIFTTT(key: string, event: string): void {
         iftttkey_def = key
         iftttevent_def = event
@@ -454,8 +405,6 @@ namespace ESP8266 {
     /*
      * post ifttt
      */
-    //% subcategory=IFTTT weight=8
-    //% blockId=postIFTTT block="post IFTTT with|value1:%value value2:%value2 value3:%value3"
     export function postIFTTT(value1: string, value2: string, value3: string): void {
         let sendST1 = "AT+HTTPCLIENT=3,1,\"http://maker.ifttt.com/trigger/" + iftttevent_def + "/with/key/" + iftttkey_def + "\",,,2,"
         let sendST2 = "\"{\\\"value1\\\":\\\"" + value1 + "\\\"\\\,\\\"value2\\\":\\\"" + value2 + "\\\"\\\,\\\"value3\\\":\\\"" + value3 + "\\\"}\""
@@ -787,24 +736,6 @@ namespace CBreedingBox {
     ////////////
     ////////////
 
-    //% block="wait %time sec"
-    //% block.loc.nl="wacht %time sec"
-    export function waitSec(time: number) {
-        basic.pause(time * 1000);
-    }
-
-    //% block="wait %time min"
-    //% block.loc.nl="wacht %time min"
-    export function waitMin(time: number) {
-        basic.pause(time * 60000);
-    }
-
-    //% block="wait %time hours"
-    //% block.loc.nl="wacht %time uren"
-    export function waitHours(time: number) {
-        basic.pause(time * 3600000);
-    }
-
     //% block="perform a measurement"
     //% block.loc.nl="voer een meting uit"
     export function measure() {
@@ -865,4 +796,94 @@ namespace CBreedingBox {
         WRITEKEY = wkey
         READKEY = rkey
     }
+}
+
+//% color="#00CC00" icon="\uf1f9"
+//% block="Time"
+//% block.loc.nl="Tijd"
+namespace Timer {
+
+    //% block="wait %time sec"
+    //% block.loc.nl="wacht %time sec"
+    export function waitSec(time: number) {
+        basic.pause(time * 1000);
+    }
+
+    //% block="wait %time min"
+    //% block.loc.nl="wacht %time min"
+    export function waitMin(time: number) {
+        basic.pause(time * 60000);
+    }
+
+    //% block="wait %time hours"
+    //% block.loc.nl="wacht %time uren"
+    export function waitHours(time: number) {
+        basic.pause(time * 3600000);
+    }
+
+    /*
+    The next timer code is derived from:
+    https://github.com/gbraad/pxt-interval
+    */
+
+    //% block="every %time seconds"
+    //% block.loc.nl="om de %time seconden"
+    export function OnEverySec(time: number, cb: () => void) {
+        const myTimerID = 200 + Math.randomRange(0, 100); // semi-unique
+        const timerTimeout = 1;
+
+        control.onEvent(myTimerID, 0, function () {
+            control.inBackground(() => {
+                cb()
+            })
+        })
+
+        control.inBackground(() => {
+            while (true) {
+                basic.pause(time * 1000);
+                control.raiseEvent(myTimerID, timerTimeout);
+            }
+        })
+    }
+
+    //% block="every %time minutes"
+    //% block.loc.nl="om de %time minuten"
+    export function OnEveryMin(time: number, cb: () => void) {
+        const myTimerID = 200 + Math.randomRange(0, 100); // semi-unique
+        const timerTimeout = 1;
+
+        control.onEvent(myTimerID, 0, function () {
+            control.inBackground(() => {
+                cb()
+            })
+        })
+
+        control.inBackground(() => {
+            while (true) {
+                basic.pause(time * 60000);
+                control.raiseEvent(myTimerID, timerTimeout);
+            }
+        })
+    }
+
+    //% block="every %time hours"
+    //% block.loc.nl="om de %time uren"
+    export function OnEveryHours(time: number, cb: () => void) {
+        const myTimerID = 200 + Math.randomRange(0, 100); // semi-unique
+        const timerTimeout = 1;
+
+        control.onEvent(myTimerID, 0, function () {
+            control.inBackground(() => {
+                cb()
+            })
+        })
+
+        control.inBackground(() => {
+            while (true) {
+                basic.pause(time * 3600000);
+                control.raiseEvent(myTimerID, timerTimeout);
+            }
+        })
+    }
+
 }
