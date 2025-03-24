@@ -863,9 +863,9 @@ namespace CTimer {
 }
 
 //% color="#00CC00" icon="\uf1f9"
-//% block="ThingSpeak"
-//% block.loc.nl="ThingSpeak"
-namespace CThingSpeak {
+//% block="Dashboard"
+//% block.loc.nl="Dashboard"
+namespace CDashboard {
 
     let WRITEKEY = ""
     let READKEY = ""
@@ -888,8 +888,8 @@ namespace CThingSpeak {
         return ESP8266.thingSpeakState(true)
     }
 
-    //% block="connect to ThingSpeak using: ssid %ssid password %passw writekey %wkey readkey %rkey"
-    //% block="verbind met ThingSpeak als volgt: ssid %ssid wachtwoord %passw writekey %wkey readkey %rkey"
+    //% block="wifi ssid %ssid wifi password %passw dashboard writekey %wkey dashboard readkey %rkey"
+    //% block="wifi ssid %ssid wifi wachtwoord %passw dashboard writekey %wkey dashboard readkey %rkey"
     export function connect(ssid: string, passw: string, wkey: string, rkey: string) {
         ESP8266.initWIFI(SerialPin.P8, SerialPin.P12, BaudRate.BaudRate115200)
         ESP8266.connectWifi(ssid, passw)
