@@ -867,33 +867,43 @@ namespace CTimer {
 //% block.loc.nl="Dashboard"
 namespace CDashboard {
 
-    let SSID = ""
-    let PASSWORD = ""
-    let WRITEKEY = ""
-    let READKEY = ""
-
     export enum Dashboard {
         //% block="ThingSpeak"
         //% block.loc.nl="ThingSpeak"
         ThingSpeak
     }
 
+    let SSID = ""
+    let PASSWORD = ""
+    let WRITEKEY = ""
+    let READKEY = ""
+    let DASHBOARD = Dashboard.ThingSpeak
+
     //% block="send to the dashboard"
     //% block.loc.nl="verzend naar het dashboard"
-    export function thingspeak_Send() {
-        ESP8266.setData(WRITEKEY,
-            CBreedingBox.MOISTURE,
-            CBreedingBox.LIGHT,
-            CBreedingBox.HUMIDITY,
-            CBreedingBox.TEMPERATURE,
-            CBreedingBox.PRESSURE);
-        ESP8266.uploadData();
+    export function upload() {
+        switch (DASHBOARD) {
+            case Dashboard.ThingSpeak:
+                ESP8266.setData(WRITEKEY,
+                    CBreedingBox.MOISTURE,
+                    CBreedingBox.LIGHT,
+                    CBreedingBox.HUMIDITY,
+                    CBreedingBox.TEMPERATURE,
+                    CBreedingBox.PRESSURE);
+                ESP8266.uploadData();
+                break;
+        }
     }
 
     //% block="connected to the dashboard"
     //% block.loc.nl="verbonden met het dashboard"
-    export function thingSpeakConneced(): boolean {
-        return ESP8266.thingSpeakState(true)
+    export function conneced(): boolean {
+        switch (DASHBOARD) {
+            case Dashboard.ThingSpeak:
+                return ESP8266.thingSpeakState(true)
+                break;
+        }
+        return false;
     }
 
     //% block="wifi ssid %ssid wifi password %passw dashboard writekey %wkey dashboard readkey %rkey"
