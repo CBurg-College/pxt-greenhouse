@@ -897,7 +897,7 @@ namespace CDashboard {
 
     //% block="connected to the dashboard"
     //% block.loc.nl="verbonden met het dashboard"
-    export function conneced(): boolean {
+    export function connected(): boolean {
         switch (DASHBOARD) {
             case Dashboard.ThingSpeak:
                 return ESP8266.thingSpeakState(true)
@@ -909,9 +909,10 @@ namespace CDashboard {
     //% block="wifi ssid %ssid wifi password %passw dashboard writekey %wkey dashboard readkey %rkey"
     //% block="verbind met %dashb"
     export function connect(dashb:Dashboard) {
+        DASHBOARD = dashb
         ESP8266.initWIFI(SerialPin.P8, SerialPin.P12, BaudRate.BaudRate115200)
         ESP8266.connectWifi(SSID, PASSWORD)
-        switch (dashb) {
+        switch (DASHBOARD) {
             case Dashboard.ThingSpeak:
                 ESP8266.connectThingSpeak()
                 break;
