@@ -248,7 +248,7 @@ namespace ESP8266 {
      * upload data. It would not upload anything if it failed to connect to Wifi or ThingSpeak.
      */
     export function uploadData() {
-        let mscnt = 0
+        let mscnt2 = 0
         //sendAT(`AT+CIPSEND=${TStoSendStr.length + 2}`, 300)
         sendAT(TStoSendStr, 100) // upload data
 
@@ -256,11 +256,11 @@ namespace ESP8266 {
 
             recvString += serial.readString()
             basic.pause(1)
-            mscnt += 1
+            mscnt2 += 1
 
             // OLED.clear()
             // OLED.writeStringNewLine(_recvString)
-            if (recvString.includes("OK") || mscnt >= 3000 || recvString.includes("ERROR")) {
+            if (recvString.includes("OK") || mscnt2 >= 3000 || recvString.includes("ERROR")) {
 
                 break
             }
@@ -304,12 +304,12 @@ namespace ESP8266 {
      */
     export function uploadSmartiot(data: number): void {
         data = Math.floor(data)
-        const jsonText = `{"topic":"${topic_def}","userToken":"${userToken_def}","op":"up","data":"${data}"}`
+        const jsonText2 = `{"topic":"${topic_def}","userToken":"${userToken_def}","op":"up","data":"${data}"}`
         currentCmd = Cmd.UploadSmartIot
-        sendAT(`AT+CIPSEND=${jsonText.length + 2}`)
+        sendAT(`AT+CIPSEND=${jsonText2.length + 2}`)
         control.waitForEvent(EspEventSource, EspEventValue.UploadSmartIot)
         if (smartiot_connected) {
-            sendAT(jsonText)
+            sendAT(jsonText2)
             control.waitForEvent(EspEventSource, EspEventValue.UploadSmartIot)
         }
         pause(1500)
@@ -320,12 +320,12 @@ namespace ESP8266 {
      */
     export function disconnectSmartiot(): void {
         if (smartiot_connected) {
-            const jsonText = `{"topic":"${topic_def}","userToken":"${userToken_def}","op":"close"}`
+            const jsonText3 = `{"topic":"${topic_def}","userToken":"${userToken_def}","op":"close"}`
             currentCmd = Cmd.DisconnectSmartIot
-            sendAT("AT+CIPSEND=" + (jsonText.length + 2))
+            sendAT("AT+CIPSEND=" + (jsonText3.length + 2))
             control.waitForEvent(EspEventSource, EspEventValue.DisconnectSmartIot)
             if (smartiot_connected) {
-                sendAT(jsonText)
+                sendAT(jsonText3)
                 control.waitForEvent(EspEventSource, EspEventValue.DisconnectSmartIot)
             }
             pause(1500)
@@ -582,7 +582,7 @@ namespace ESP8266 {
 }
 
 //% color="#00CC00" icon="\uf1f9"
-//% block="BreedingBox"
+//% block="Breeding box"
 //% block.loc.nl="Kweekbakje"
 namespace CBreedingBox {
 
@@ -741,6 +741,57 @@ namespace CBreedingBox {
         getBME280()
     }
 
+    export enum State {
+        //% block="on"
+        //% block.loc.nl="aan"
+        on,
+        //% block="on"
+        //% block.loc.nl="aan"
+        off
+    }
+
+    export enum Color {
+        //% block="white"
+        //% block.loc.nl="wit"
+        white,
+        //% block="black"
+        //% block.loc.nl="zwart"
+        black,
+        //% block="red"
+        //% block.loc.nl="rood"
+        red,
+        //% block="yellow"
+        //% block.loc.nl="geel"
+        yellow,
+        //% block="green"
+        //% block.loc.nl="groen"
+        green,
+        //% block="blue"
+        //% block.loc.nl="blauw"
+        blue,
+        //% block="lightblue"
+        //% block.loc.nl="lichtblauw"
+        cyan,
+        //% block="purple"
+        //% block.loc.nl="paars"
+        magenta
+    }
+
+    //% block="turn the pump %state"
+    //% block.loc.nl="schakel de pomp %state"
+    export function pump(state:State) {
+    }
+
+    //% block="set the light color to %color"
+    //% block.loc.nl="stel de lichtkleur in op %color"
+    export function color(color:Color) {
+    }
+
+    //% block="set the light intensity to %intensity %%"
+    //% block.loc.nl="stel de felheid in op %intensity %%"
+    export function intensity(intensity:number) {
+    }
+
     //% block="air pressure"
     //% block.loc.nl="luchtdruk"
     export function pressure(): number {
@@ -823,10 +874,10 @@ namespace CTimer {
     //% block="every %time minutes"
     //% block.loc.nl="om de %time minuten"
     export function OnEveryMin(time: number, cb: () => void) {
-        const myTimerID = 200 + Math.randomRange(0, 100); // semi-unique
-        const timerTimeout = 1;
+        const myTimerID2 = 200 + Math.randomRange(0, 100); // semi-unique
+        const timerTimeout2 = 1;
 
-        control.onEvent(myTimerID, 0, function () {
+        control.onEvent(myTimerID2, 0, function () {
             control.inBackground(() => {
                 cb()
             })
@@ -835,7 +886,7 @@ namespace CTimer {
         control.inBackground(() => {
             while (true) {
                 basic.pause(time * 60000);
-                control.raiseEvent(myTimerID, timerTimeout);
+                control.raiseEvent(myTimerID2, timerTimeout2);
             }
         })
     }
@@ -843,10 +894,10 @@ namespace CTimer {
     //% block="every %time hours"
     //% block.loc.nl="om de %time uren"
     export function OnEveryHours(time: number, cb: () => void) {
-        const myTimerID = 200 + Math.randomRange(0, 100); // semi-unique
-        const timerTimeout = 1;
+        const myTimerID3 = 200 + Math.randomRange(0, 100); // semi-unique
+        const timerTimeout3 = 1;
 
-        control.onEvent(myTimerID, 0, function () {
+        control.onEvent(myTimerID3, 0, function () {
             control.inBackground(() => {
                 cb()
             })
@@ -855,7 +906,7 @@ namespace CTimer {
         control.inBackground(() => {
             while (true) {
                 basic.pause(time * 3600000);
-                control.raiseEvent(myTimerID, timerTimeout);
+                control.raiseEvent(myTimerID3, timerTimeout3);
             }
         })
     }
