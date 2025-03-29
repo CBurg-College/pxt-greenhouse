@@ -780,6 +780,10 @@ namespace CBreedingBox {
     //% block="turn the pump %state"
     //% block.loc.nl="schakel de pomp %state"
     export function pump(state:State) {
+        if ( state == State.on )
+            pins.digitalWritePin(DigitalPin.P20, 1)
+        else
+            pins.digitalWritePin(DigitalPin.P20, 0)
     }
 
     //% block="set the light color to %color"
