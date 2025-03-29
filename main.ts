@@ -749,6 +749,8 @@ namespace neopixel {
     }
 }
 
+let NEOP = neopixel.create(DigitalPin.P1, 8, NeoPixelMode.RGB)
+
 //% color="#00CC00" icon="\uf1f9"
 //% block="Breeding box"
 //% block.loc.nl="Kweekbakje"
@@ -756,8 +758,6 @@ namespace CBreedingBox {
 
     let PIN_LIGHT = DigitalPin.P1
     let PIN_PUMP = DigitalPin.P16
-
-    let NEOP = neopixel.create(DigitalPin.P1, 8, NeoPixelMode.RGB)
 
     export let MOISTURE : number = 0
     export let HUMIDITY : number = 0
