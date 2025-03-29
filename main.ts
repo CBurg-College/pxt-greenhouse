@@ -781,12 +781,10 @@ namespace CBreedingBox {
     //% block="turn the pump %state"
     //% block.loc.nl="schakel de pomp %state"
     export function pump(state:State) {
-        // pump is connected to the NC (normal closed) pin
-        // to avoid pumping at startup of the micro:bit
         if ( state == State.on )
-            pins.digitalWritePin(PIN_PUMP, 0)
-        else
             pins.digitalWritePin(PIN_PUMP, 1)
+        else
+            pins.digitalWritePin(PIN_PUMP, 0)
     }
 
     //% block="set the light color to %color"
