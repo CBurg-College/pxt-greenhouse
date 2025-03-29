@@ -581,6 +581,187 @@ namespace ESP8266 {
     })
 }
 
+/*
+The neopixel code is copied from the Microsoft 'neopixel.ts' library:
+https://github.com/microsoft/pxt-neopixel
+https://github.com/microsoft/pxt-ws2812b
+(MIT-license)
+*/
+
+namespace ws2812b {
+    //% shim=sendBufferAsm
+    export function sendBuffer(buf: Buffer, pin: DigitalPin) {
+    }
+
+    //% shim=setBufferMode
+    export function setBufferMode(pin: DigitalPin, mode: number) {
+
+    }
+
+    export const BUFFER_MODE_RGB = 1
+    export const BUFFER_MODE_RGBW = 2
+    export const BUFFER_MODE_RGB_RGB = 3
+    export const BUFFER_MODE_AP102 = 4
+}
+
+enum NeoPixelMode {
+    RGB = 1,
+    RGBW = 2,
+    RGB_RGB = 3
+}
+
+namespace neopixel {
+
+    export class Strip {
+        buf: Buffer;
+        pin: DigitalPin;
+        // TODO: encode as bytes instead of 32bit
+        brightness: number;
+        start: number; // start offset in LED strip
+        _length: number; // number of LEDs
+        _mode: NeoPixelMode;
+        _matrixWidth: number; // number of leds in a matrix - if any
+
+        //% strip.defl=strip
+        //% parts="neopixel"
+        showColor(rgb: number) {
+            rgb = rgb >> 0;
+            this.setAllRGB(rgb);
+            this.show();
+        }
+
+        //% strip.defl=strip
+        //% parts="neopixel"
+        show() {
+            // only supported in beta
+            // ws2812b.setBufferMode(this.pin, this._mode);
+            ws2812b.sendBuffer(this.buf, this.pin);
+        }
+
+        //% strip.defl=strip
+        //% parts="neopixel"
+        clear(): void {
+            const stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
+            this.buf.fill(0, this.start * stride, this._length * stride);
+        }
+
+        //% strip.defl=strip
+        //% parts="neopixel" advanced=true
+        setBrightness(brightness: number): void {
+            this.brightness = brightness & 0xff;
+        }
+
+        //% parts="neopixel" advanced=true
+        setPin(pin: DigitalPin): void {
+            this.pin = pin;
+            pins.digitalWritePin(this.pin, 0);
+            // don't yield to avoid races on initialization
+        }
+
+        private setBufferRGB(offset: number, red: number, green: number, blue: number): void {
+            if (this._mode === NeoPixelMode.RGB_RGB) {
+                this.buf[offset + 0] = red;
+                this.buf[offset + 1] = green;
+            } else {
+                this.buf[offset + 0] = green;
+                this.buf[offset + 1] = red;
+            }
+            this.buf[offset + 2] = blue;
+        }
+
+        private setAllRGB(rgb: number) {
+            let red = unpackR(rgb);
+            let green = unpackG(rgb);
+            let blue = unpackB(rgb);
+
+            const br = this.brightness;
+            if (br < 255) {
+                red = (red * br) >> 8;
+                green = (green * br) >> 8;
+                blue = (blue * br) >> 8;
+            }
+            const end = this.start + this._length;
+            const stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
+            for (let i = this.start; i < end; ++i) {
+                this.setBufferRGB(i * stride, red, green, blue)
+            }
+        }
+    }
+
+    //% parts="neopixel"
+    //% trackArgs=0,2
+    //% blockSetVariable=strip
+    export function create(pin: DigitalPin, numleds: number, mode: NeoPixelMode): Strip {
+        let strip = new Strip();
+        let stride = mode === NeoPixelMode.RGBW ? 4 : 3;
+        strip.buf = pins.createBuffer(numleds * stride);
+        strip.start = 0;
+        strip._length = numleds;
+        strip._mode = mode || NeoPixelMode.RGB;
+        strip._matrixWidth = 0;
+        strip.setBrightness(128)
+        strip.setPin(pin)
+        return strip;
+    }
+
+    //% advanced=true
+    export function rgb(red: number, green: number, blue: number): number {
+        return packRGB(red, green, blue);
+    }
+
+    function packRGB(a: number, b: number, c: number): number {
+        return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);
+    }
+    function unpackR(rgb: number): number {
+        let r = (rgb >> 16) & 0xFF;
+        return r;
+    }
+    function unpackG(rgb: number): number {
+        let g = (rgb >> 8) & 0xFF;
+        return g;
+    }
+    function unpackB(rgb: number): number {
+        let b = (rgb) & 0xFF;
+        return b;
+    }
+
+    export function hsl(h: number, s: number, l: number): number {
+        h = Math.round(h);
+        s = Math.round(s);
+        l = Math.round(l);
+
+        h = h % 360;
+        s = Math.clamp(0, 99, s);
+        l = Math.clamp(0, 99, l);
+        let c = Math.idiv((((100 - Math.abs(2 * l - 100)) * s) << 8), 10000); //chroma, [0,255]
+        let h1 = Math.idiv(h, 60);//[0,6]
+        let h2 = Math.idiv((h - h1 * 60) * 256, 60);//[0,255]
+        let temp = Math.abs((((h1 % 2) << 8) + h2) - 256);
+        let x = (c * (256 - (temp))) >> 8;//[0,255], second largest component of this color
+        let r$: number;
+        let g$: number;
+        let b$: number;
+        if (h1 == 0) {
+            r$ = c; g$ = x; b$ = 0;
+        } else if (h1 == 1) {
+            r$ = x; g$ = c; b$ = 0;
+        } else if (h1 == 2) {
+            r$ = 0; g$ = c; b$ = x;
+        } else if (h1 == 3) {
+            r$ = 0; g$ = x; b$ = c;
+        } else if (h1 == 4) {
+            r$ = x; g$ = 0; b$ = c;
+        } else if (h1 == 5) {
+            r$ = c; g$ = 0; b$ = x;
+        }
+        let m = Math.idiv((Math.idiv((l * 2 << 8), 100) - c), 2);
+        let r = r$ + m;
+        let g = g$ + m;
+        let b = b$ + m;
+        return packRGB(r, g, b);
+    }
+}
+
 //% color="#00CC00" icon="\uf1f9"
 //% block="Breeding box"
 //% block.loc.nl="Kweekbakje"
@@ -588,6 +769,8 @@ namespace CBreedingBox {
 
     let PIN_LIGHT = DigitalPin.P1
     let PIN_PUMP = DigitalPin.P16
+
+    let NEOP = neopixel.create(DigitalPin.P1, 8, NeoPixelMode.RGB)
 
     export let MOISTURE : number = 0
     export let HUMIDITY : number = 0
@@ -734,14 +917,6 @@ namespace CBreedingBox {
     ////////////
     ////////////
 
-    //% block="perform a measurement"
-    //% block.loc.nl="voer een meting uit"
-    export function measure() {
-        let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
-        LIGHT = Math.round(value)
-        getBME280()
-    }
-
     export enum State {
         //% block="on"
         //% block.loc.nl="aan"
@@ -752,30 +927,44 @@ namespace CBreedingBox {
     }
 
     export enum Color {
-        //% block="white"
-        //% block.loc.nl="wit"
-        white,
-        //% block="black"
-        //% block.loc.nl="zwart"
-        black,
         //% block="red"
         //% block.loc.nl="rood"
-        red,
+        Red = 0xFF0000,
+        //% block="orange"
+        //% block.loc.nl="oranje"
+        Orange = 0xFFA500,
         //% block="yellow"
         //% block.loc.nl="geel"
-        yellow,
+        Yellow = 0xFFFF00,
         //% block="green"
         //% block.loc.nl="groen"
-        green,
+        Green = 0x00FF00,
         //% block="blue"
         //% block.loc.nl="blauw"
-        blue,
-        //% block="lightblue"
-        //% block.loc.nl="lichtblauw"
-        cyan,
+        Blue = 0x0000FF,
+        //% block="indigo"
+        //% block.loc.nl="indigo"
+        Indigo = 0x4b0082,
+        //% block="violet"
+        //% block.loc.nl="violet"
+        Violet = 0x8a2be2,
         //% block="purple"
         //% block.loc.nl="paars"
-        magenta
+        Purple = 0xFF00FF,
+        //% block="white"
+        //% block.loc.nl="wit"
+        White = 0xFFFFFF,
+        //% block="black"
+        //% block.loc.nl="zwart"
+        Black = 0x000000
+    }
+
+    //% block="perform a measurement"
+    //% block.loc.nl="voer een meting uit"
+    export function measure() {
+        let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
+        LIGHT = Math.round(value)
+        getBME280()
     }
 
     //% block="turn the pump %state"
@@ -787,14 +976,22 @@ namespace CBreedingBox {
             pins.digitalWritePin(PIN_PUMP, 0)
     }
 
-    //% block="set the light color to %color"
-    //% block.loc.nl="stel de lichtkleur in op %color"
-    export function color(color:Color) {
+    //% block="hue %h|saturation %s|luminosity %l"
+    export function hsl(h: number, s: number, l: number): number {
+        return neopixel.hsl(h, s, l);
     }
 
-    //% block="set the light intensity to %intensity %%"
-    //% block.loc.nl="stel de felheid in op %intensity %%"
-    export function intensity(intensity:number) {
+    //% block="red %r|green %g|blue %b"
+    export function rgb(r: number, g: number, b: number): number {
+        return neopixel.rgb(r, g, b);
+    }
+
+    //% block="set the light color to %color"
+    //% block.loc.nl="stel de lichtkleur in op %color"
+    //% brightness.max=100 brightness.min=0 brightness.defl=100
+    export function setColor(color: Color, brightness: number = 100) {
+        NEOP.showColor( color);
+        NEOP.setBrightness( brightness)
     }
 
     //% block="air pressure"
