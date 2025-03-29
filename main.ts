@@ -836,9 +836,9 @@ namespace BME280 {
 //% block.loc.nl="Kweekbakje"
 namespace CBreedingBox {
 
-    let NEOP = neopixel.create(DigitalPin.P1, 8, NeoPixelMode.RGB)
-    let PIN_SOIL = DigitalPin.P2
-    let PIN_LIGHT = DigitalPin.P3
+    let NEOP = neopixel.create(DigitalPin.P13, 8, NeoPixelMode.RGB)
+    let PIN_SOIL = DigitalPin.P14
+    let PIN_LIGHT = DigitalPin.P15
     let PIN_PUMP = DigitalPin.P16
 
     export let MOISTURE : number = 0
