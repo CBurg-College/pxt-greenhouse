@@ -622,36 +622,27 @@ namespace neopixel {
         _mode: NeoPixelMode;
         _matrixWidth: number; // number of leds in a matrix - if any
 
-        //% strip.defl=strip
-        //% parts="neopixel"
         showColor(rgb: number) {
             rgb = rgb >> 0;
             this.setAllRGB(rgb);
             this.show();
         }
 
-        //% strip.defl=strip
-        //% parts="neopixel"
         show() {
             // only supported in beta
             // ws2812b.setBufferMode(this.pin, this._mode);
             ws2812b.sendBuffer(this.buf, this.pin);
         }
 
-        //% strip.defl=strip
-        //% parts="neopixel"
         clear(): void {
             const stride = this._mode === NeoPixelMode.RGBW ? 4 : 3;
             this.buf.fill(0, this.start * stride, this._length * stride);
         }
 
-        //% strip.defl=strip
-        //% parts="neopixel" advanced=true
         setBrightness(brightness: number): void {
             this.brightness = brightness & 0xff;
         }
 
-        //% parts="neopixel" advanced=true
         setPin(pin: DigitalPin): void {
             this.pin = pin;
             pins.digitalWritePin(this.pin, 0);
@@ -688,9 +679,6 @@ namespace neopixel {
         }
     }
 
-    //% parts="neopixel"
-    //% trackArgs=0,2
-    //% blockSetVariable=strip
     export function create(pin: DigitalPin, numleds: number, mode: NeoPixelMode): Strip {
         let strip = new Strip();
         let stride = mode === NeoPixelMode.RGBW ? 4 : 3;
@@ -704,7 +692,6 @@ namespace neopixel {
         return strip;
     }
 
-    //% advanced=true
     export function rgb(red: number, green: number, blue: number): number {
         return packRGB(red, green, blue);
     }
