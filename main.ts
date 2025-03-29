@@ -831,6 +831,92 @@ namespace BME280 {
     }
 }
 
+namespace DHT22 {
+
+    /*
+    The DHT code is taken from the Alan Wang 'dht11_dht22.ts' library:
+    https://github.com/alankrantas/pxt-DHT11_DHT22
+    (MIT-license)
+    */
+
+    let dataPin = DigitalPin.P1
+
+    export let TEMPERATURE: number = -999.0
+    export let HUMIDITY: number = -999.0
+    export let SUCCESS: boolean = false
+
+    export function measure() {
+
+        //initialize
+        let startTime: number = 0
+        let endTime: number = 0
+        let checksum: number = 0
+        let checksumTmp: number = 0
+        let dataArray: boolean[] = []
+        let resultArray: number[] = []
+        for (let index = 0; index < 40; index++) dataArray.push(false)
+        for (let index = 0; index < 5; index++) resultArray.push(0)
+        HUMIDITY = -999.0
+        TEMPERATURE = -999.0
+        SUCCESS = false
+
+        startTime = input.runningTimeMicros()
+
+        //request data
+        pins.digitalWritePin(dataPin, 0) //begin protocol
+        basic.pause(18)
+        // pins.setPull(dataPin, PinPullMode.PullUp) //pull up data pin if needed
+        pins.digitalReadPin(dataPin)
+        //control.waitMicros(20)
+        //while (pins.digitalReadPin(dataPin) == 1);
+
+        // **** new code - check if the device is connected ****
+        // if it is NOT connected then we should get a 1 from it after 60us, so we
+        // return with the default temperature and humidity values
+        // otherwise we will get a 0 and we will continue with the processing.
+        control.waitMicros(60);
+        if (pins.digitalReadPin(dataPin) == 1) {
+            return
+        }
+        while (pins.digitalReadPin(dataPin) == 0); //sensor response
+        while (pins.digitalReadPin(dataPin) == 1); //sensor response
+
+        //read data (5 bytes)
+        for (let index = 0; index < 40; index++) {
+            while (pins.digitalReadPin(dataPin) == 1);
+            while (pins.digitalReadPin(dataPin) == 0);
+            control.waitMicros(28)
+            //if sensor pull up data pin for more than 28 us it means 1, otherwise 0
+            if (pins.digitalReadPin(dataPin) == 1) dataArray[index] = true
+        }
+
+        endTime = input.runningTimeMicros()
+
+        //convert byte number array to integer
+        for (let index = 0; index < 5; index++)
+            for (let index2 = 0; index2 < 8; index2++)
+                if (dataArray[8 * index + index2]) resultArray[index] += 2 ** (7 - index2)
+
+        //verify checksum
+        checksumTmp = resultArray[0] + resultArray[1] + resultArray[2] + resultArray[3]
+        checksum = resultArray[4]
+        if (checksumTmp >= 512) checksumTmp -= 512
+        if (checksumTmp >= 256) checksumTmp -= 256
+        if (checksum == checksumTmp) SUCCESS = true
+
+        //read data if checksum ok
+        if (SUCCESS) {
+            let temp_sign: number = 1
+            if (resultArray[2] >= 128) {
+                resultArray[2] -= 128
+                temp_sign = -1
+            }
+            HUMIDITY = (resultArray[0] * 256 + resultArray[1]) / 10
+            TEMPERATURE = (resultArray[2] * 256 + resultArray[3]) / 10 * temp_sign
+        }
+    }
+}
+
 //% color="#00CC00" icon="\uf1f9"
 //% block="Breeding box"
 //% block.loc.nl="Kweekbakje"
@@ -852,6 +938,20 @@ namespace CBreedingBox {
         //% block.loc.nl="uit"
         off
     }
+
+    export enum Sensor {
+        //% block="none"
+        //% block.loc.nl="geen"
+        None,
+        //% block="DHT22"
+        //% block.loc.nl="DHT22"
+        Dht22,
+        //% block="BME280"
+        //% block.loc.nl="BME280"
+        Bme280
+    }
+
+    let SENSOR = Sensor.None
 
     export enum Color {
         //% block="red"
@@ -886,12 +986,21 @@ namespace CBreedingBox {
         Black = 0x000000
     }
 
+    //% block="user %sensor"
+    //% block.loc.nl="gebruik %sensor"
+    export function useSensor(sensor: Sensor) {
+        SENSOR = sensor
+    }
+
     //% block="perform a measurement"
     //% block.loc.nl="voer een meting uit"
     export function measure() {
         let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
         LIGHT = Math.round(value)
-        BME280.measure()
+        switch ( SENSOR) {
+            case Sensor.Bme280: BME280.measure(); break;
+            case Sensor.Dht22:  DHT22.measure(); break;
+        }
     }
 
     //% block="turn the pump %state"
@@ -903,10 +1012,10 @@ namespace CBreedingBox {
             pins.digitalWritePin(PIN_PUMP, 0)
     }
 
-    //% block="set the light color to %color"
-    //% block.loc.nl="stel de lichtkleur in op %color"
-    //% brightness.max=100 brightness.min=0 brightness.defl=100
-    export function setColor(color: Color, brightness: number = 100) {
+    //% block="set the light color to %color with brightness %brightness"
+    //% block.loc.nl="stel de lichtkleur in op %color met helderheid %brightness"
+    //% brightness.min=0 brightness.max=100 brightness.defl=100
+    export function setColor(color: Color, brightness: number) {
         NEOP.showColor( color);
         NEOP.setBrightness( brightness)
     }
@@ -914,7 +1023,8 @@ namespace CBreedingBox {
     //% block="air pressure"
     //% block.loc.nl="luchtdruk"
     export function pressure(): number {
-        return BME280.PRESSURE
+        if ( SENSOR == Sensor.Bme280) return BME280.PRESSURE
+        return -1000
     }
 
     //% block="amount of light"
@@ -932,13 +1042,17 @@ namespace CBreedingBox {
     //% block="humidity"
     //% block.loc.nl="luchtvochtigheid"
     export function humidity(): number {
-        return BME280.HUMIDITY
+        if (SENSOR == Sensor.Bme280) return BME280.HUMIDITY
+        if (SENSOR == Sensor.Dht22) return DHT22.HUMIDITY
+        return -1000
     }
 
     //% block="temperature"
     //% block.loc.nl="temperatuur"
     export function temperature(): number {
-        return BME280.TEMPERATURE
+        if (SENSOR == Sensor.Bme280) return BME280.TEMPERATURE
+        if (SENSOR == Sensor.Dht22) return DHT22.TEMPERATURE
+        return -1000
     }
 }
 
