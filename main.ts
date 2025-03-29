@@ -587,7 +587,7 @@ namespace ESP8266 {
 namespace CBreedingBox {
 
     let PIN_LIGHT = DigitalPin.P1
-    let PIN_PUMP = DigitalPin.P20
+    let PIN_PUMP = DigitalPin.P16
 
     export let MOISTURE : number = 0
     export let HUMIDITY : number = 0
