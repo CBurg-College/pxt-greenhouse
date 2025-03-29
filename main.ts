@@ -675,10 +675,6 @@ namespace neopixel {
         return strip;
     }
 
-    export function rgb(red: number, green: number, blue: number): number {
-        return packRGB(red, green, blue);
-    }
-
     function packRGB(a: number, b: number, c: number): number {
         return ((a & 0xFF) << 16) | ((b & 0xFF) << 8) | (c & 0xFF);
     }
@@ -694,63 +690,13 @@ namespace neopixel {
         let b = (rgb) & 0xFF;
         return b;
     }
-
-    export function hsl(h: number, s: number, l: number): number {
-        h = Math.round(h);
-        s = Math.round(s);
-        l = Math.round(l);
-
-        h = h % 360;
-        s = Math.clamp(0, 99, s);
-        l = Math.clamp(0, 99, l);
-        let c = Math.idiv((((100 - Math.abs(2 * l - 100)) * s) << 8), 10000); //chroma, [0,255]
-        let h1 = Math.idiv(h, 60);//[0,6]
-        let h2 = Math.idiv((h - h1 * 60) * 256, 60);//[0,255]
-        let temp = Math.abs((((h1 % 2) << 8) + h2) - 256);
-        let x = (c * (256 - (temp))) >> 8;//[0,255], second largest component of this color
-        let r$: number;
-        let g$: number;
-        let b$: number;
-        if (h1 == 0) {
-            r$ = c; g$ = x; b$ = 0;
-        } else if (h1 == 1) {
-            r$ = x; g$ = c; b$ = 0;
-        } else if (h1 == 2) {
-            r$ = 0; g$ = c; b$ = x;
-        } else if (h1 == 3) {
-            r$ = 0; g$ = x; b$ = c;
-        } else if (h1 == 4) {
-            r$ = x; g$ = 0; b$ = c;
-        } else if (h1 == 5) {
-            r$ = c; g$ = 0; b$ = x;
-        }
-        let m = Math.idiv((Math.idiv((l * 2 << 8), 100) - c), 2);
-        let r = r$ + m;
-        let g = g$ + m;
-        let b = b$ + m;
-        return packRGB(r, g, b);
-    }
 }
 
-let NEOP = neopixel.create(DigitalPin.P1, 8, NeoPixelMode.RGB)
+namespace BME280 {
 
-//% color="#00CC00" icon="\uf1f9"
-//% block="Breeding box"
-//% block.loc.nl="Kweekbakje"
-namespace CBreedingBox {
-
-    let PIN_LIGHT = DigitalPin.P1
-    let PIN_PUMP = DigitalPin.P16
-
-    export let MOISTURE : number = 0
-    export let HUMIDITY : number = 0
-    export let TEMPERATURE : number = 0
-    export let LIGHT : number = 0
-    export let PRESSURE : number = 0
-
-    ////////////
-    // BME280 //
-    ////////////
+    export let HUMIDITY: number = 0
+    export let TEMPERATURE: number = 0
+    export let PRESSURE: number = 0
 
     /*
     The BME280 code is taken from the ElecFreaks 'environment.ts' library:
@@ -854,7 +800,7 @@ namespace CBreedingBox {
     setreg(0xF5, 0x0C)
     setreg(0xF4, 0x2F)
 
-    function getBME280(): void {
+    export function measure(): void {
         let adc_T = (getreg(0xFA) << 12) + (getreg(0xFB) << 4) + (getreg(0xFC) >> 4)
         let var1 = (((adc_T >> 3) - (dig_T1 << 1)) * dig_T2) >> 11
         let var2 = (((((adc_T >> 4) - dig_T1) * ((adc_T >> 4) - dig_T1)) >> 12) * dig_T3) >> 14
@@ -883,9 +829,20 @@ namespace CBreedingBox {
         if (var2 > 419430400) var2 = 419430400
         HUMIDITY = (var2 >> 12) / 1024
     }
+}
 
-    ////////////
-    ////////////
+//% color="#00CC00" icon="\uf1f9"
+//% block="Breeding box"
+//% block.loc.nl="Kweekbakje"
+namespace CBreedingBox {
+
+    let NEOP = neopixel.create(DigitalPin.P1, 8, NeoPixelMode.RGB)
+    let PIN_SOIL = DigitalPin.P2
+    let PIN_LIGHT = DigitalPin.P3
+    let PIN_PUMP = DigitalPin.P16
+
+    export let MOISTURE : number = 0
+    export let LIGHT : number = 0
 
     export enum State {
         //% block="on"
@@ -934,7 +891,7 @@ namespace CBreedingBox {
     export function measure() {
         let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
         LIGHT = Math.round(value)
-        getBME280()
+        BME280.measure()
     }
 
     //% block="turn the pump %state"
@@ -944,16 +901,6 @@ namespace CBreedingBox {
             pins.digitalWritePin(PIN_PUMP, 1)
         else
             pins.digitalWritePin(PIN_PUMP, 0)
-    }
-
-    //% block="hue %h|saturation %s|luminosity %l"
-    export function hsl(h: number, s: number, l: number): number {
-        return neopixel.hsl(h, s, l);
-    }
-
-    //% block="red %r|green %g|blue %b"
-    export function rgb(r: number, g: number, b: number): number {
-        return neopixel.rgb(r, g, b);
     }
 
     //% block="set the light color to %color"
@@ -967,7 +914,7 @@ namespace CBreedingBox {
     //% block="air pressure"
     //% block.loc.nl="luchtdruk"
     export function pressure(): number {
-        return PRESSURE
+        return BME280.PRESSURE
     }
 
     //% block="amount of light"
@@ -985,13 +932,13 @@ namespace CBreedingBox {
     //% block="humidity"
     //% block.loc.nl="luchtvochtigheid"
     export function humidity(): number {
-        return HUMIDITY
+        return BME280.HUMIDITY
     }
 
     //% block="temperature"
     //% block.loc.nl="temperatuur"
     export function temperature(): number {
-        return TEMPERATURE
+        return BME280.TEMPERATURE
     }
 }
 
@@ -1110,9 +1057,9 @@ namespace CDashboard {
                 ESP8266.setData(WRITEKEY,
                     CBreedingBox.MOISTURE,
                     CBreedingBox.LIGHT,
-                    CBreedingBox.HUMIDITY,
-                    CBreedingBox.TEMPERATURE,
-                    CBreedingBox.PRESSURE);
+                    BME280.HUMIDITY,
+                    BME280.TEMPERATURE,
+                    BME280.PRESSURE);
                 ESP8266.uploadData();
                 break;
         }
