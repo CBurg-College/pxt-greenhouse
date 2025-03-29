@@ -587,6 +587,7 @@ namespace ESP8266 {
 namespace CBreedingBox {
 
     let PIN_LIGHT = DigitalPin.P1
+    let PIN_PUMP = DigitalPin.P20
 
     export let MOISTURE : number = 0
     export let HUMIDITY : number = 0
@@ -746,7 +747,7 @@ namespace CBreedingBox {
         //% block.loc.nl="aan"
         on,
         //% block="on"
-        //% block.loc.nl="aan"
+        //% block.loc.nl="uit"
         off
     }
 
@@ -780,10 +781,12 @@ namespace CBreedingBox {
     //% block="turn the pump %state"
     //% block.loc.nl="schakel de pomp %state"
     export function pump(state:State) {
+        // pump is connected to the NC (normal closed) pin
+        // to avoid pumping at startup of the micro:bit
         if ( state == State.on )
-            pins.digitalWritePin(DigitalPin.P20, 1)
+            pins.digitalWritePin(PIN_PUMP, 0)
         else
-            pins.digitalWritePin(DigitalPin.P20, 0)
+            pins.digitalWritePin(PIN_PUMP, 1)
     }
 
     //% block="set the light color to %color"
