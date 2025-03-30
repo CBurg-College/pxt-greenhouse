@@ -839,11 +839,15 @@ namespace DHT22 {
     (MIT-license)
     */
 
-    let dataPin = DigitalPin.P1
+    let dataPin = DigitalPin.P14
 
     export let TEMPERATURE: number = -999.0
     export let HUMIDITY: number = -999.0
     export let SUCCESS: boolean = false
+
+    export function setPin( pin: DigitalPin) {
+        dataPin = pin
+    }
 
     export function measure() {
 
@@ -922,9 +926,10 @@ namespace DHT22 {
 //% block.loc.nl="Kweekbakje"
 namespace CBreedingBox {
 
-    let NEOP = neopixel.create(DigitalPin.P13, 8, NeoPixelMode.RGB)
-    let PIN_SOIL = DigitalPin.P14
-    let PIN_LIGHT = DigitalPin.P15
+    let PIN_SOIL = AnalogPin.P1
+    let PIN_LIGHT = AnalogPin.P2
+    DHT22.setPin( DigitalPin.P14)
+    let NEOP = neopixel.create(DigitalPin.P15, 8, NeoPixelMode.RGB)
     let PIN_PUMP = DigitalPin.P16
 
     export let MOISTURE : number = 0
