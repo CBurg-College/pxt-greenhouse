@@ -924,8 +924,8 @@ namespace CBreedingBox {
 
     let NEOP = neopixel.create(DigitalPin.P13, 8, NeoPixelMode.RGB)
     let PIN_SOIL = DigitalPin.P14
-    let PIN_LIGHT = DigitalPin.P16
-    let PIN_PUMP = DigitalPin.P15
+    let PIN_LIGHT = DigitalPin.P15
+    let PIN_PUMP = DigitalPin.P16
 
     export let MOISTURE : number = 0
     export let LIGHT : number = 0
@@ -995,7 +995,8 @@ namespace CBreedingBox {
     //% block="perform a measurement"
     //% block.loc.nl="voer een meting uit"
     export function measure() {
-        let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
+//        let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
+        let value = pins.analogReadPin(PIN_LIGHT)
         LIGHT = Math.round(value)
         switch ( SENSOR) {
             case Sensor.Bme280: BME280.measure(); break;
