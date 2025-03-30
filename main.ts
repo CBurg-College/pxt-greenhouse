@@ -924,8 +924,8 @@ namespace CBreedingBox {
 
     let NEOP = neopixel.create(DigitalPin.P13, 8, NeoPixelMode.RGB)
     let PIN_SOIL = DigitalPin.P14
-    let PIN_LIGHT = DigitalPin.P15
-    let PIN_PUMP = DigitalPin.P16
+    let PIN_LIGHT = DigitalPin.P16
+    let PIN_PUMP = DigitalPin.P15
 
     export let MOISTURE : number = 0
     export let LIGHT : number = 0
@@ -940,15 +940,15 @@ namespace CBreedingBox {
     }
 
     export enum Sensor {
-        //% block="none"
-        //% block.loc.nl="geen"
-        None,
         //% block="DHT22"
         //% block.loc.nl="DHT22"
         Dht22,
         //% block="BME280"
         //% block.loc.nl="BME280"
-        Bme280
+        Bme280,
+        //% block="none"
+        //% block.loc.nl="geen"
+        None
     }
 
     let SENSOR = Sensor.None
