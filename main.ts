@@ -932,8 +932,8 @@ namespace CBreedingBox {
     let NEOP = neopixel.create(DigitalPin.P15, 8, NeoPixelMode.RGB)
     let PIN_PUMP = DigitalPin.P16
 
-    export let MOISTURE : number = 0
-    export let LIGHT : number = 0
+    export let MOISTURE : number = -1000
+    export let LIGHT : number = -1000
 
     export enum State {
         //% block="on"
