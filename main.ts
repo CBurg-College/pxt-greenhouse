@@ -852,8 +852,6 @@ namespace DHT22 {
     export function measure() {
 
         //initialize
-        let startTime: number = 0
-        let endTime: number = 0
         let checksum: number = 0
         let checksumTmp: number = 0
         let dataArray: boolean[] = []
@@ -863,8 +861,6 @@ namespace DHT22 {
         HUMIDITY = -999.0
         TEMPERATURE = -999.0
         SUCCESS = false
-
-        startTime = input.runningTimeMicros()
 
         //request data
         pins.digitalWritePin(dataPin, 0) //begin protocol
@@ -893,8 +889,6 @@ namespace DHT22 {
             //if sensor pull up data pin for more than 28 us it means 1, otherwise 0
             if (pins.digitalReadPin(dataPin) == 1) dataArray[index] = true
         }
-
-        endTime = input.runningTimeMicros()
 
         //convert byte number array to integer
         for (let index = 0; index < 5; index++)
@@ -932,8 +926,8 @@ namespace CBreedingBox {
     let NEOP = neopixel.create(DigitalPin.P15, 8, NeoPixelMode.RGB)
     let PIN_PUMP = DigitalPin.P16
 
-    export let MOISTURE : number = -1000
-    export let LIGHT : number = -1000
+    export let MOISTURE : number = -999
+    export let LIGHT : number = -999
 
     export enum State {
         //% block="on"
