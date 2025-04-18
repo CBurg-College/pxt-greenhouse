@@ -1213,3 +1213,59 @@ namespace CDashboard {
         READKEY = rkey
     }
 }
+
+//% color="#00CC00" icon="\uf1f9"
+//% block="BarDiagram"
+//% block.loc.nl="Staafdiagram"
+namespace CBarDiagram {
+
+    let LOWLEFT = 0
+    let LOWRIGHT = 0
+
+    export enum Bar {
+        //% block="left"
+        //% block.loc.nl="linker"
+        Left,
+        //% block="right"
+        //% block.loc.nl="rechter"
+        Right
+    }
+
+    //% block="set the low value for the %pos bar to %valperc"
+    //% block.loc.nl="stel de onderwaarde van de %pos staaf in op %valperc"
+    //% valperc.min=0 valperc.max=100 valperc.defl=0
+    export function lowValue(pos: Bar, valperc: number) {
+        if (pos == Bar.Left)
+            LOWLEFT = valperc
+        else
+            LOWRIGHT = valperc
+    }
+
+    //% block="draw the %pos bar with value %valperc"
+    //% block.loc.nl="teken de %pos staaf met waarde %valperc"
+    //% valperc.min=0 valperc.max=100 valperc.defl=0
+    export function bar(pos: Bar, valperc: number) {
+        let x = (pos == Bar.Left ? 0 : 3)
+        let low = (pos == Bar.Left ? LOWLEFT : LOWRIGHT)
+
+        if (valperc == low) {
+            for (let y = 0; y < 5; y++) {
+                led.unplot(x, 4 - y)
+                led.unplot(x + 1, 4 - y)
+            }
+        }
+        else {
+            valperc = Math.map(valperc, low, 100, 0, 4)
+            for (let y = 0; y < 5; y++) {
+                if (y <= valperc) {
+                    led.plot(x, 4 - y)
+                    led.plot(x + 1, 4 - y)
+                }
+                else {
+                    led.unplot(x, 4 - y)
+                    led.unplot(x + 1, 4 - y)
+                }
+            }
+        }
+    }
+}
