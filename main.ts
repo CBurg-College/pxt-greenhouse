@@ -1221,6 +1221,8 @@ namespace CBarDiagram {
 
     let LOWLEFT = 0
     let LOWRIGHT = 0
+    let HIGHLEFT = 100
+    let HIGHRIGHT = 100
 
     export enum Bar {
         //% block="left"
@@ -1231,14 +1233,24 @@ namespace CBarDiagram {
         Right
     }
 
+    //% block="set the high value for the %pos bar to %valperc"
+    //% block.loc.nl="stel de bovenwaarde van de %pos staaf in op %valperc"
+    //% valperc.min=0 valperc.max=100 valperc.defl=100
+    export function highValue(pos: Bar, valperc: number) {
+        if (pos == Bar.Left)
+            HIGHLEFT = (valperc > LOWLEFT ? valperc : LOWLEFT)
+        else
+            HIGHRIGHT = (valperc > LOWRIGHT ? valperc : LOWRIGHT)
+    }
+
     //% block="set the low value for the %pos bar to %valperc"
     //% block.loc.nl="stel de onderwaarde van de %pos staaf in op %valperc"
     //% valperc.min=0 valperc.max=100 valperc.defl=0
     export function lowValue(pos: Bar, valperc: number) {
         if (pos == Bar.Left)
-            LOWLEFT = valperc
+            LOWLEFT = (valperc < HIGHLEFT ? valperc : HIGHLEFT)
         else
-            LOWRIGHT = valperc
+            LOWRIGHT = (valperc < HIGHRIGHT ? valperc : HIGHRIGHT)
     }
 
     //% block="draw the %pos bar with value %valperc"
@@ -1247,6 +1259,7 @@ namespace CBarDiagram {
     export function bar(pos: Bar, valperc: number) {
         let x = (pos == Bar.Left ? 0 : 3)
         let low = (pos == Bar.Left ? LOWLEFT : LOWRIGHT)
+        let high = (pos == Bar.Left ? HIGHLEFT : HIGHRIGHT)
 
         if (valperc == low) {
             for (let y = 0; y < 5; y++) {
@@ -1255,7 +1268,7 @@ namespace CBarDiagram {
             }
         }
         else {
-            valperc = Math.map(valperc, low, 100, 0, 4)
+            valperc = Math.map(valperc, low, high, 0, 4)
             for (let y = 0; y < 5; y++) {
                 if (y <= valperc) {
                     led.plot(x, 4 - y)
