@@ -918,6 +918,7 @@ namespace DHT22 {
 //% color="#00CC00" icon="\uf1f9"
 //% block="Breeding box"
 //% block.loc.nl="Kweekbakje"
+//% groups=['•']
 namespace CBreedingBox {
 
     let PIN_SOIL = AnalogPin.P1
@@ -1032,6 +1033,41 @@ namespace CBreedingBox {
     //% block.loc.nl="hoeveelheid licht"
     export function light(): number {
         return LIGHT
+    }
+
+    //% block="bone-dry"
+    //% block.loc.nl="kurkdroog"
+    //% group="•"
+    export function moisture0(): number {
+        return 25
+    }
+
+    //% block="dry"
+    //% block.loc.nl="droog"
+    //% group="•"
+    export function moisture1(): number {
+        return 50
+    }
+
+    //% block="moist"
+    //% block.loc.nl="vochtig"
+    //% group="•"
+    export function moisture2(): number {
+        return 70
+    }
+
+    //% block="wet"
+    //% block.loc.nl="nat"
+    //% group="•"
+    export function moisture3(): number {
+        return 85
+    }
+
+    //% block="soaking"
+    //% block.loc.nl="doornat"
+    //% group="•"
+    export function moisture4(): number {
+        return MOISTURE
     }
 
     //% block="moisture"
