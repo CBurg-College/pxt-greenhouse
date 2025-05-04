@@ -995,10 +995,12 @@ namespace CBreedingBox {
     //% block="perform a measurement"
     //% block.loc.nl="voer een meting uit"
     export function measure() {
-        let value = pins.map(pins.analogReadPin(PIN_LIGHT), 0, 1023, 0, 100);
-        LIGHT = Math.round(value)
-        value = pins.map(pins.analogReadPin(PIN_SOIL), 0, 1023, 0, 100);
-        MOISTURE = Math.round(value)
+        let voltL = pins.analogReadPin(PIN_LIGHT)
+        let valueL = pins.map(voltL, 0, 1023, 0, 100)
+        LIGHT = Math.round(valueL)
+        let voltS = pins.analogReadPin(PIN_SOIL)
+        let valueS = pins.map(voltS, 0, 1023, 0, 100)
+        MOISTURE = Math.round(valueS)
         switch ( SENSOR) {
             case Sensor.Bme280: BME280.measure(); break;
             case Sensor.Dht22:  DHT22.measure(); break;
