@@ -886,10 +886,12 @@ namespace DHT22 {
                     valueC = valueC + (1 << (31 - i))
                 }
             }
+/*
             if (counter > 3) {
                 // humidity
                 valueH = valueH + (1 << (7 - i))
             }
+*/
         }
         TEMPERATURE = ((valueC & 0x0000ff00) >> 8)
         HUMIDITY = valueH
@@ -976,20 +978,16 @@ namespace CBreedingBox {
     //% block="perform a measurement"
     //% block.loc.nl="voer een meting uit"
     export function measure() {
-basic.showString("?")
         let voltL = pins.analogReadPin(PIN_LIGHT)
         let valueL = pins.map(voltL, 0, 1023, 0, 100)
-basic.showString("L")
         LIGHT = Math.round(valueL)
         let voltS = pins.analogReadPin(PIN_SOIL)
         let valueS = pins.map(voltS, 0, 1023, 0, 100)
         MOISTURE = Math.round(valueS)
-basic.showString("M")
         switch ( SENSOR) {
             case Sensor.Bme280: BME280.measure(); break;
             case Sensor.Dht22:  DHT22.measure(); break;
         }
-basic.showString("D")
     }
 
     //% block="turn the pump %state"
