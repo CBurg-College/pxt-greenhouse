@@ -865,7 +865,7 @@ namespace DHT22 {
         //request data
         pins.digitalWritePin(dataPin, 0) //begin protocol
         basic.pause(18)
-        // pins.setPull(dataPin, PinPullMode.PullUp) //pull up data pin if needed
+        pins.setPull(dataPin, PinPullMode.PullUp) //pull up data pin if needed
         pins.digitalReadPin(dataPin)
         //control.waitMicros(20)
         //while (pins.digitalReadPin(dataPin) == 1);
