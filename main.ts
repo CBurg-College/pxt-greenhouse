@@ -850,6 +850,7 @@ namespace DHT22 {
     }
 
     export function measure() {
+        dataPin = DigitalPin.P14
 
         //initialize
         let checksum: number = 0
@@ -871,9 +872,13 @@ namespace DHT22 {
         let valueC = 0
         let valueH = 0
         let counter = 0
+
+        // wait for data
         while (pins.digitalReadPin(dataPin) == 1) ;
         while (pins.digitalReadPin(dataPin) == 0) ;
         while (pins.digitalReadPin(dataPin) == 1) ;
+
+        // read data
         for (let i = 0; i <= 32 - 1; i++) {
             while (pins.digitalReadPin(dataPin) == 0) ;
             counter = 0
