@@ -863,55 +863,36 @@ namespace DHT22 {
         SUCCESS = false
 
         //request data
-        pins.digitalWritePin(dataPin, 0) //begin protocol
+        pins.digitalWritePin(dataPin, 0)
         basic.pause(18)
-        pins.setPull(dataPin, PinPullMode.PullUp) //pull up data pin if needed
-        pins.digitalReadPin(dataPin)
-        //control.waitMicros(20)
-        //while (pins.digitalReadPin(dataPin) == 1);
+        let i = pins.digitalReadPin(dataPin)
+        pins.setPull(dataPin, PinPullMode.PullUp)
 
-        // **** new code - check if the device is connected ****
-        // if it is NOT connected then we should get a 1 from it after 60us, so we
-        // return with the default temperature and humidity values
-        // otherwise we will get a 0 and we will continue with the processing.
-        control.waitMicros(60);
-        if (pins.digitalReadPin(dataPin) == 1) {
-            return
-        }
-        while (pins.digitalReadPin(dataPin) == 0); //sensor response
-        while (pins.digitalReadPin(dataPin) == 1); //sensor response
-
-        //read data (5 bytes)
-        for (let index = 0; index < 40; index++) {
-            while (pins.digitalReadPin(dataPin) == 1);
-            while (pins.digitalReadPin(dataPin) == 0);
-            control.waitMicros(28)
-            //if sensor pull up data pin for more than 28 us it means 1, otherwise 0
-            if (pins.digitalReadPin(dataPin) == 1) dataArray[index] = true
-        }
-
-        //convert byte number array to integer
-        for (let index = 0; index < 5; index++)
-            for (let index2 = 0; index2 < 8; index2++)
-                if (dataArray[8 * index + index2]) resultArray[index] += 2 ** (7 - index2)
-
-        //verify checksum
-        checksumTmp = resultArray[0] + resultArray[1] + resultArray[2] + resultArray[3]
-        checksum = resultArray[4]
-        if (checksumTmp >= 512) checksumTmp -= 512
-        if (checksumTmp >= 256) checksumTmp -= 256
-        if (checksum == checksumTmp) SUCCESS = true
-
-        //read data if checksum ok
-        if (SUCCESS) {
-            let temp_sign: number = 1
-            if (resultArray[2] >= 128) {
-                resultArray[2] -= 128
-                temp_sign = -1
+        let valueC = 0
+        let valueH = 0
+        let counter = 0
+        while (pins.digitalReadPin(dataPin) == 1) ;
+        while (pins.digitalReadPin(dataPin) == 0) ;
+        while (pins.digitalReadPin(dataPin) == 1) ;
+        for (let i = 0; i <= 32 - 1; i++) {
+            while (pins.digitalReadPin(dataPin) == 0) ;
+            counter = 0
+            while (pins.digitalReadPin(dataPin) == 1) {
+                counter += 1
             }
-            HUMIDITY = (resultArray[0] * 256 + resultArray[1]) / 10
-            TEMPERATURE = (resultArray[2] * 256 + resultArray[3]) / 10 * temp_sign
+            if (i > 15) {
+                // temperature
+                if (counter > 2) {
+                    valueC = valueC + (1 << (31 - i))
+                }
+            }
+            if (counter > 3) {
+                // humidity
+                valueH = valueH + (1 << (7 - i))
+            }
         }
+        TEMPERATURE = ((valueC & 0x0000ff00) >> 8)
+        HUMIDITY = valueH
     }
 }
 
