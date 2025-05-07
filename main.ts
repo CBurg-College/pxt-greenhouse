@@ -907,7 +907,8 @@ namespace DHT22 {
         }
 
         if (((data[0] + data[1] + data[2] + data[3]) & 0xff) === data[4]) {
-            HUMIDITY = data[0] + data[1] * 0.1
+            HUMIDITY = (data[0] << 8) | data[1]
+            HUMIDITY *= 0.1
             TEMPERATURE = data[2] + data[3] * 0.1
         }
     }
