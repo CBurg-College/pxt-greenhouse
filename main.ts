@@ -1076,6 +1076,7 @@ namespace CBreedingBox {
             case Sensor.Dht22:
                 DHT22.TEMPERATURE = DHT22.temperature( DHT22.DHT11Type.DHT11_temperature_C,
                     DigitalPin.P14)
+                basic.showNumber(DHT22.TEMPERATURE)
         }
     }
 
