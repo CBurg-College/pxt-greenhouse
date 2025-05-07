@@ -840,6 +840,14 @@ namespace DHT22 {
     Note that the latest release does not work
     */
 
+    // TODO: V2 bug
+    pins.digitalReadPin(DigitalPin.P0);
+    pins.digitalReadPin(DigitalPin.P1);
+    pins.digitalReadPin(DigitalPin.P2);
+    pins.digitalReadPin(DigitalPin.P3);
+    pins.digitalReadPin(DigitalPin.P4);
+    pins.digitalReadPin(DigitalPin.P10);
+
     let dataPin = DigitalPin.P14
 
     export let TEMPERATURE: number = -999.0
@@ -855,16 +863,6 @@ namespace DHT22 {
         const buffer = pins.createBuffer(40)
         const data = [0, 0, 0, 0, 0]
         let startTime = control.micros()
-
-        // TODO: V2 bug
-        /*
-        pins.digitalReadPin(DigitalPin.P0);
-        pins.digitalReadPin(DigitalPin.P1);
-        pins.digitalReadPin(DigitalPin.P2);
-        pins.digitalReadPin(DigitalPin.P3);
-        pins.digitalReadPin(DigitalPin.P4);
-        pins.digitalReadPin(DigitalPin.P10);
-        */
 
         // 1.start signal
         pins.digitalWritePin(dataPin, 0)
