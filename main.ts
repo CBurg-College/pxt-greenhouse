@@ -849,138 +849,68 @@ namespace DHT22 {
         dataPin = pin
     }
 
-    export enum DHT11Type {
-        //% block="temperature(℃)" enumval=0
-        DHT11_temperature_C,
-
-        //% block="temperature(℉)" enumval=1
-        DHT11_temperature_F,
-
-        //% block="humidity(0~100)" enumval=2
-        DHT11_humidity,
-    }
-
-    export function temperature(dht11type: DHT11Type, dht11pin: DigitalPin): number {
-
-        pins.digitalWritePin(dht11pin, 0)
-        basic.pause(18)
-        let i = pins.digitalReadPin(dht11pin)
-        pins.setPull(dht11pin, PinPullMode.PullUp);
-        switch (dht11type) {
-            case 0:
-                let dhtvalue1 = 0;
-                let dhtcounter1 = 0;
-                while (pins.digitalReadPin(dht11pin) == 1);
-                while (pins.digitalReadPin(dht11pin) == 0);
-                while (pins.digitalReadPin(dht11pin) == 1);
-                for (let i = 0; i <= 32 - 1; i++) {
-                    while (pins.digitalReadPin(dht11pin) == 0);
-                    dhtcounter1 = 0
-                    while (pins.digitalReadPin(dht11pin) == 1) {
-                        dhtcounter1 += 1;
-                    }
-                    if (i > 15) {
-                        if (dhtcounter1 > 2) {
-                            dhtvalue1 = dhtvalue1 + (1 << (31 - i));
-                        }
-                    }
-                }
-                return ((dhtvalue1 & 0x0000ff00) >> 8);
-                break;
-            case 1:
-                while (pins.digitalReadPin(dht11pin) == 1);
-                while (pins.digitalReadPin(dht11pin) == 0);
-                while (pins.digitalReadPin(dht11pin) == 1);
-                let dhtvalue = 0;
-                let dhtcounter = 0;
-                for (let i = 0; i <= 32 - 1; i++) {
-                    while (pins.digitalReadPin(dht11pin) == 0);
-                    dhtcounter = 0
-                    while (pins.digitalReadPin(dht11pin) == 1) {
-                        dhtcounter += 1;
-                    }
-                    if (i > 15) {
-                        if (dhtcounter > 2) {
-                            dhtvalue = dhtvalue + (1 << (31 - i));
-                        }
-                    }
-                }
-                return Math.round((((dhtvalue & 0x0000ff00) >> 8) * 9 / 5) + 32);
-                break;
-            case 2:
-                while (pins.digitalReadPin(dht11pin) == 1);
-                while (pins.digitalReadPin(dht11pin) == 0);
-                while (pins.digitalReadPin(dht11pin) == 1);
-
-                let value = 0;
-                let counter = 0;
-
-                for (let i = 0; i <= 8 - 1; i++) {
-                    while (pins.digitalReadPin(dht11pin) == 0);
-                    counter = 0
-                    while (pins.digitalReadPin(dht11pin) == 1) {
-                        counter += 1;
-                    }
-                    if (counter > 3) {
-                        value = value + (1 << (7 - i));
-                    }
-                }
-                return value;
-            default:
-                return 0;
-        }
-    }
-
     export function measure() {
+        const DHT11_TIMEOUT = 100
+        const buffer = pins.createBuffer(40)
+        const data = [0, 0, 0, 0, 0]
+        let startTime = control.micros()
 
-        //initialize
-        let checksum: number = 0
-        let checksumTmp: number = 0
-        let dataArray: boolean[] = []
-        let resultArray: number[] = []
-        for (let index = 0; index < 40; index++) dataArray.push(false)
-        for (let index = 0; index < 5; index++) resultArray.push(0)
-        HUMIDITY = -999.0
-        TEMPERATURE = -999.0
-        SUCCESS = false
+        if (control.hardwareVersion().slice(0, 1) !== '1') { // V2
+            // TODO: V2 bug
+            pins.digitalReadPin(DigitalPin.P0);
+            pins.digitalReadPin(DigitalPin.P1);
+            pins.digitalReadPin(DigitalPin.P2);
+            pins.digitalReadPin(DigitalPin.P3);
+            pins.digitalReadPin(DigitalPin.P4);
+            pins.digitalReadPin(DigitalPin.P10);
 
-        //request data
-        pins.digitalWritePin(dataPin, 0)
-        basic.pause(18)
-        let i = pins.digitalReadPin(dataPin)
-        pins.setPull(dataPin, PinPullMode.PullUp)
+            // 1.start signal
+            pins.digitalWritePin(dataPin, 0)
+            basic.pause(18)
 
-        let valueC = 0
-        let valueH = 0
-        let counter = 0
+            // 2.pull up and wait 40us
+            pins.setPull(dataPin, PinPullMode.PullUp)
+            pins.digitalReadPin(dataPin)
+            control.waitMicros(40)
 
-        // wait for data
-        while (pins.digitalReadPin(dataPin) == 1) ;
-        while (pins.digitalReadPin(dataPin) == 0) ;
-        while (pins.digitalReadPin(dataPin) == 1) ;
-
-        // read data
-        for (let i = 0; i <= 32 - 1; i++) {
-            while (pins.digitalReadPin(dataPin) == 0) ;
-            counter = 0
-            while (pins.digitalReadPin(dataPin) == 1) {
-                counter += 1
+            // 3.read data
+            startTime = control.micros()
+            while (pins.digitalReadPin(dataPin) === 0) {
+                if (control.micros() - startTime > DHT11_TIMEOUT) break
             }
-            if (i > 15) {
-                // temperature
-                if (counter > 2) {
-                    valueC = valueC + (1 << (31 - i))
+            startTime = control.micros()
+            while (pins.digitalReadPin(dataPin) === 1) {
+                if (control.micros() - startTime > DHT11_TIMEOUT) break
+            }
+
+            for (let dataBits = 0; dataBits < 40; dataBits++) {
+                startTime = control.micros()
+                while (pins.digitalReadPin(dataPin) === 1) {
+                    if (control.micros() - startTime > DHT11_TIMEOUT) break
+                }
+                startTime = control.micros()
+                while (pins.digitalReadPin(dataPin) === 0) {
+                    if (control.micros() - startTime > DHT11_TIMEOUT) break
+                }
+                control.waitMicros(28)
+                if (pins.digitalReadPin(dataPin) === 1) {
+                    buffer[dataBits] = 1
                 }
             }
-/*
-            if (counter > 3) {
-                // humidity
-                valueH = valueH + (1 << (7 - i))
-            }
-*/
         }
-        TEMPERATURE = ((valueC & 0x0000ff00) >> 8)
-        HUMIDITY = valueH
+
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (buffer[8 * i + j] === 1) {
+                    data[i] += 2 ** (7 - j)
+                }
+            }
+        }
+
+        if (((data[0] + data[1] + data[2] + data[3]) & 0xff) === data[4]) {
+            HUMIDITY = data[0] + data[1] * 0.1
+            TEMPERATURE = data[2] + data[3] * 0.1
+        }
     }
 }
 
@@ -1072,11 +1002,7 @@ namespace CBreedingBox {
         MOISTURE = Math.round(valueS)
         switch ( SENSOR) {
             case Sensor.Bme280: BME280.measure(); break;
-//            case Sensor.Dht22:  DHT22.measure(); break;
-            case Sensor.Dht22:
-                DHT22.TEMPERATURE = DHT22.temperature( DHT22.DHT11Type.DHT11_temperature_C,
-                    DigitalPin.P14)
-                basic.showNumber(DHT22.TEMPERATURE)
+            case Sensor.Dht22:  DHT22.measure(); break;
         }
     }
 
