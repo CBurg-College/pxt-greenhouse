@@ -834,9 +834,10 @@ namespace BME280 {
 namespace DHT22 {
 
     /*
-    The DHT code is taken from the Alan Wang 'dht11_dht22.ts' library:
-    https://github.com/alankrantas/pxt-DHT11_DHT22
+    The DHT code is taken from an older version of the tjnkertanker library:
+    https://github.com/tinkertanker/pxt-iot-environment-kit/releases/tag/v5.2.7
     (MIT-license)
+    Note that the latest release does not work
     */
 
     let dataPin = DigitalPin.P14
@@ -855,47 +856,47 @@ namespace DHT22 {
         const data = [0, 0, 0, 0, 0]
         let startTime = control.micros()
 
-        if (control.hardwareVersion().slice(0, 1) !== '1') { // V2
-            // TODO: V2 bug
-            pins.digitalReadPin(DigitalPin.P0);
-            pins.digitalReadPin(DigitalPin.P1);
-            pins.digitalReadPin(DigitalPin.P2);
-            pins.digitalReadPin(DigitalPin.P3);
-            pins.digitalReadPin(DigitalPin.P4);
-            pins.digitalReadPin(DigitalPin.P10);
+        // TODO: V2 bug
+        /*
+        pins.digitalReadPin(DigitalPin.P0);
+        pins.digitalReadPin(DigitalPin.P1);
+        pins.digitalReadPin(DigitalPin.P2);
+        pins.digitalReadPin(DigitalPin.P3);
+        pins.digitalReadPin(DigitalPin.P4);
+        pins.digitalReadPin(DigitalPin.P10);
+        */
 
-            // 1.start signal
-            pins.digitalWritePin(dataPin, 0)
-            basic.pause(18)
+        // 1.start signal
+        pins.digitalWritePin(dataPin, 0)
+        basic.pause(18)
 
-            // 2.pull up and wait 40us
-            pins.setPull(dataPin, PinPullMode.PullUp)
-            pins.digitalReadPin(dataPin)
-            control.waitMicros(40)
+        // 2.pull up and wait 40us
+        pins.setPull(dataPin, PinPullMode.PullUp)
+        pins.digitalReadPin(dataPin)
+        control.waitMicros(40)
 
-            // 3.read data
-            startTime = control.micros()
-            while (pins.digitalReadPin(dataPin) === 0) {
-                if (control.micros() - startTime > DHT11_TIMEOUT) break
-            }
+        // 3.read data
+        startTime = control.micros()
+        while (pins.digitalReadPin(dataPin) === 0) {
+            if (control.micros() - startTime > DHT11_TIMEOUT) break
+        }
+        startTime = control.micros()
+        while (pins.digitalReadPin(dataPin) === 1) {
+            if (control.micros() - startTime > DHT11_TIMEOUT) break
+        }
+
+        for (let dataBits = 0; dataBits < 40; dataBits++) {
             startTime = control.micros()
             while (pins.digitalReadPin(dataPin) === 1) {
                 if (control.micros() - startTime > DHT11_TIMEOUT) break
             }
-
-            for (let dataBits = 0; dataBits < 40; dataBits++) {
-                startTime = control.micros()
-                while (pins.digitalReadPin(dataPin) === 1) {
-                    if (control.micros() - startTime > DHT11_TIMEOUT) break
-                }
-                startTime = control.micros()
-                while (pins.digitalReadPin(dataPin) === 0) {
-                    if (control.micros() - startTime > DHT11_TIMEOUT) break
-                }
-                control.waitMicros(28)
-                if (pins.digitalReadPin(dataPin) === 1) {
-                    buffer[dataBits] = 1
-                }
+            startTime = control.micros()
+            while (pins.digitalReadPin(dataPin) === 0) {
+                if (control.micros() - startTime > DHT11_TIMEOUT) break
+            }
+            control.waitMicros(28)
+            if (pins.digitalReadPin(dataPin) === 1) {
+                buffer[dataBits] = 1
             }
         }
 
