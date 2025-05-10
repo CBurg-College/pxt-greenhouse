@@ -846,7 +846,7 @@ namespace DHT22 {
     export let HUMIDITY: number = -999.0
     export let SUCCESS: boolean = false
 
-    export function setPin( pin: DigitalPin) {
+    export function setPin(pin: DigitalPin) {
         dataPin = pin
     }
 
@@ -922,12 +922,12 @@ namespace CBreedingBox {
 
     let PIN_SOIL = AnalogPin.P1
     let PIN_LIGHT = AnalogPin.P2
-    DHT22.setPin( DigitalPin.P14)
+    DHT22.setPin(DigitalPin.P14)
     let NEOP = neopixel.create(DigitalPin.P15, 8, NeoPixelMode.RGB)
     let PIN_PUMP = DigitalPin.P16
 
-    export let MOISTURE : number = -999
-    export let LIGHT : number = -999
+    export let MOISTURE: number = -999
+    export let LIGHT: number = -999
 
     export enum State {
         //% block="on"
@@ -1003,18 +1003,18 @@ namespace CBreedingBox {
         let valueS = pins.analogReadPin(PIN_SOIL) - 136
         if (valueS < 0) valueS = 0
         if (valueS > 100) valueS = 100
-        MOISTURE = Math.round(100-valueS)
+        MOISTURE = Math.round(100 - valueS)
 
-        switch ( SENSOR) {
+        switch (SENSOR) {
             case Sensor.Bme280: BME280.measure(); break;
-            case Sensor.Dht22:  DHT22.measure(); break;
+            case Sensor.Dht22: DHT22.measure(); break;
         }
     }
 
     //% block="turn the pump %state"
     //% block.loc.nl="schakel de pomp %state"
-    export function pump(state:State) {
-        if ( state == State.on )
+    export function pump(state: State) {
+        if (state == State.on)
             pins.digitalWritePin(PIN_PUMP, 1)
         else
             pins.digitalWritePin(PIN_PUMP, 0)
@@ -1024,14 +1024,14 @@ namespace CBreedingBox {
     //% block.loc.nl="stel de lichtkleur in op %color met helderheid %brightness"
     //% brightness.min=0 brightness.max=100 brightness.defl=100
     export function setColor(color: Color, brightness: number) {
-        NEOP.showColor( color);
-        NEOP.setBrightness( brightness)
+        NEOP.showColor(color);
+        NEOP.setBrightness(brightness)
     }
 
     //% block="air pressure"
     //% block.loc.nl="luchtdruk"
     export function pressure(): number {
-        if ( SENSOR == Sensor.Bme280) return BME280.PRESSURE
+        if (SENSOR == Sensor.Bme280) return BME280.PRESSURE
         return -1000
     }
 
@@ -1235,7 +1235,7 @@ namespace CDashboard {
 
     //% block="wifi ssid %ssid wifi password %passw dashboard writekey %wkey dashboard readkey %rkey"
     //% block="verbind met %dashb"
-    export function connect(dashb:Dashboard) {
+    export function connect(dashb: Dashboard) {
         DASHBOARD = dashb
         ESP8266.initWIFI(SerialPin.P8, SerialPin.P12, BaudRate.BaudRate115200)
         ESP8266.connectWifi(SSID, PASSWORD)
@@ -1295,10 +1295,10 @@ namespace CBarDiagram {
         if (pos == Bar.Left)
             HIGHLEFT = (valperc > LOWLEFT ? valperc : LOWLEFT)
         else
-        if (pos == Bar.Mid)
-            HIGHMID = (valperc > LOWMID ? valperc : LOWMID)
-        else
-            HIGHRIGHT = (valperc > LOWRIGHT ? valperc : LOWRIGHT)
+            if (pos == Bar.Mid)
+                HIGHMID = (valperc > LOWMID ? valperc : LOWMID)
+            else
+                HIGHRIGHT = (valperc > LOWRIGHT ? valperc : LOWRIGHT)
     }
 
     //% block="set the low value for the %pos bar to %valperc"
@@ -1308,10 +1308,10 @@ namespace CBarDiagram {
         if (pos == Bar.Left)
             LOWLEFT = (valperc < HIGHLEFT ? valperc : HIGHLEFT)
         else
-        if (pos == Bar.Mid)
-            LOWMID = (valperc < HIGHMID ? valperc : HIGHMID)
-        else
-            LOWRIGHT = (valperc < HIGHRIGHT ? valperc : HIGHRIGHT)
+            if (pos == Bar.Mid)
+                LOWMID = (valperc < HIGHMID ? valperc : HIGHMID)
+            else
+                LOWRIGHT = (valperc < HIGHRIGHT ? valperc : HIGHRIGHT)
     }
 
     //% block="draw the %pos bar with value %valperc"
@@ -1325,14 +1325,14 @@ namespace CBarDiagram {
 
         switch (pos) {
             case Bar.Left: low = LOWLEFT; high = HIGHLEFT
-                           x = 0
-                           break
+                x = 0
+                break
             case Bar.Mid: low = LOWMID; high = HIGHMID;
-                          x = (BARS == 1 ? 1 : 2)
-                          break;
+                x = (BARS == 1 ? 1 : 2)
+                break;
             case Bar.Right: low = LOWRIGHT; high = HIGHRIGHT;
-                            x = 5 - w
-                            break;
+                x = 5 - w
+                break;
         }
 
         if (valperc == low) {
