@@ -998,11 +998,11 @@ namespace CBreedingBox {
         let valueL = pins.map(voltL, 0, 1023, 0, 100)
         LIGHT = Math.round(valueL)
         let voltS = pins.analogReadPin(PIN_SOIL)
-        let valueS = pins.map(voltS, 23, 13, 0, 100)
+        let valueS = 100 - pins.map(voltS, 13, 23, 0, 100)
         // the sensor gives values from 13 to 23
         // value 13 means fully soaken
         // value 23 means fully dry
-        MOISTURE = Math.round(valueS/10)
+        MOISTURE = Math.round(valueS)
         switch ( SENSOR) {
             case Sensor.Bme280: BME280.measure(); break;
             case Sensor.Dht22:  DHT22.measure(); break;
