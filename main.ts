@@ -1328,7 +1328,7 @@ namespace CBarDiagram {
                            x = 0
                            break
             case Bar.Mid: low = LOWMID; high = HIGHMID;
-                          x = (BARS == 3 ? 2 : 1)
+                          x = (BARS == 1 ? 1 : 2)
                           break;
             case Bar.Right: low = LOWRIGHT; high = HIGHRIGHT;
                             x = 5 - w
