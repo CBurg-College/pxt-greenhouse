@@ -1350,9 +1350,9 @@ namespace CBarDiagram {
                 if (y <= valperc) {
                     led.plot(x, 4 - y)
                     if (w > 1)
-                        led.unplot(x + 1, 4 - y)
+                        led.plot(x + 1, 4 - y)
                     if (w > 2)
-                        led.unplot(x + 2, 4 - y)
+                        led.plot(x + 2, 4 - y)
                 }
                 else {
                     led.unplot(x, 4 - y)
