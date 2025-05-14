@@ -1007,8 +1007,8 @@ namespace CBreedingBox {
         SENSOR = sensor
     }
 
-    //% block="display %type"
-    //% block.loc.nl="toon %sensor"
+    //% block="display %value"
+    //% block.loc.nl="toon %value"
     export function display(value: Measurement) {
         let str = ""
         switch (value) {
