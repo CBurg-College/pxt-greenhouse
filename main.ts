@@ -1016,7 +1016,7 @@ namespace CBreedingBox {
                 str = Math.round( DHT22.TEMPERATURE).toString() + "C"
                 break
             case Measurement.Humidity:
-                str = DHT22.HUMIDITY.toString() + "%R"
+                str = Math.round( DHT22.HUMIDITY).toString() + "%R"
                 break;
             case Measurement.Moisture:
                 str = MOISTURE.toString() + "%M"
