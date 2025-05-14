@@ -985,10 +985,47 @@ namespace CBreedingBox {
         Black = 0x000000
     }
 
+
+    export enum Measurement {
+        //% block="temperature"
+        //% block.loc.nl="temperatuur"
+        Temperature = 0xFF0000,
+        //% block="humitidy"
+        //% block.loc.nl="luchtvochtigheid"
+        Humidity = 0xFFA500,
+        //% block="moisture"
+        //% block.loc.nl="bodemvochtigheid"
+        Moisture = 0xFFFF00,
+        //% block="illuminance"
+        //% block.loc.nl="verlichting"
+        Illuminance = 0x00FF00
+    }
+
     //% block="user %sensor"
     //% block.loc.nl="gebruik %sensor"
     export function useSensor(sensor: Sensor) {
         SENSOR = sensor
+    }
+
+    //% block="display %type"
+    //% block.loc.nl="toon %sensor"
+    export function display(value: Measurement) {
+        let str = ""
+        switch (value) {
+            case Measurement.Temperature:
+                str = Math.round( DHT22.TEMPERATURE).toString() + "C"
+                break
+            case Measurement.Humidity:
+                str = DHT22.HUMIDITY.toString() + "%R"
+                break;
+            case Measurement.Moisture:
+                str = MOISTURE.toString() + "%M"
+                break;
+            case Measurement.Illuminance:
+                str = LIGHT.toString() + "%L"
+                break;
+        }
+        basic.showString(str)
     }
 
     //% block="perform a measurement"
