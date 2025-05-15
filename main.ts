@@ -220,7 +220,7 @@ namespace ESP8266 {
     }
 
     /**
-     * Connect to ThingSpeak and set data.
+     * Set data
      */
     export function setData(write_api_key: string, n1: number = 0, n2: number = 0, n3: number = 0, n4: number = 0, n5: number = 0, n6: number = 0, n7: number = 0, n8: number = 0) {
         TStoSendStr = "AT+HTTPCLIENT=2,0,\"http://api.thingspeak.com/update?api_key="
@@ -245,7 +245,7 @@ namespace ESP8266 {
     }
 
     /**
-     * upload data. It would not upload anything if it failed to connect to Wifi or ThingSpeak.
+     * upload data to ThingSpeak.
      */
     export function uploadData() {
         let mscnt2 = 0
@@ -1013,16 +1013,26 @@ namespace CBreedingBox {
         let str = ""
         switch (value) {
             case Measurement.Temperature:
+                basic.showString("T")
                 str = Math.round( DHT22.TEMPERATURE).toString() + "C"
                 break
             case Measurement.Humidity:
-                str = Math.round( DHT22.HUMIDITY).toString() + "%R"
+                basic.showString("R")
+                str = Math.round( DHT22.HUMIDITY).toString() + "%"
                 break;
             case Measurement.Moisture:
-                str = MOISTURE.toString() + "%M"
+                basic.showString("M")
+                str = MOISTURE.toString() + "%"
                 break;
             case Measurement.Illuminance:
-                str = LIGHT.toString() + "*"
+                basic.showLeds(`
+                                . # # # .
+                                # . . . #
+                                # . # . #
+                                # . . . #
+                                . # # # .
+                                `)
+                str = LIGHT.toString() + "%"
                 break;
         }
         basic.showString(str)
