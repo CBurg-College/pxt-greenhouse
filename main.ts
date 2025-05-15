@@ -926,6 +926,7 @@ namespace CBreedingBox {
     let NEOP = neopixel.create(DigitalPin.P15, 8, NeoPixelMode.RGB)
     let PIN_PUMP = DigitalPin.P16
 
+    export let PUMP : number  = 0
     export let MOISTURE: number = -999
     export let LIGHT: number = -999
 
@@ -950,7 +951,7 @@ namespace CBreedingBox {
         None
     }
 
-    let SENSOR = Sensor.None
+    export let SENSOR = Sensor.None
 
     export enum Color {
         //% block="red"
@@ -1056,10 +1057,14 @@ namespace CBreedingBox {
     //% block="turn the pump %state"
     //% block.loc.nl="schakel de pomp %state"
     export function pump(state: State) {
-        if (state == State.on)
+        if (state == State.on) {
             pins.digitalWritePin(PIN_PUMP, 1)
-        else
+            PUMP = 1
+        }
+        else {
             pins.digitalWritePin(PIN_PUMP, 0)
+            PUMP = 0
+        }
     }
 
     //% block="set the light color to %color with brightness %brightness"
@@ -1251,14 +1256,30 @@ namespace CDashboard {
     //% block="send to the dashboard"
     //% block.loc.nl="verzend naar het dashboard"
     export function upload() {
+        let tmp : number
+        let hum : number
+        let prs : number
+        switch (CBreedingBox.SENSOR) {
+            case CBreedingBox.Sensor.Dht22 :
+                tmp = DHT22.TEMPERATURE
+                hum = DHT22.HUMIDITY
+                prs = 0
+                break
+            case CBreedingBox.Sensor.Bme280 :
+                tmp = BME280.TEMPERATURE
+                hum = BME280.HUMIDITY
+                prs = BME280.PRESSURE
+                break
+        }
         switch (DASHBOARD) {
             case Dashboard.ThingSpeak:
                 ESP8266.setData(WRITEKEY,
                     CBreedingBox.MOISTURE,
                     CBreedingBox.LIGHT,
-                    BME280.HUMIDITY,
-                    BME280.TEMPERATURE,
-                    BME280.PRESSURE);
+                    hum,
+                    tmp,
+                    CBreedingBox.PUMP,
+                    prs);
                 ESP8266.uploadData();
                 break;
         }
