@@ -1035,7 +1035,8 @@ namespace CBreedingBox {
                 str = LIGHT.toString() + "%"
                 break;
         }
-        basic.showString(str)
+        basic.pause(1000)
+        basic.showString(" " + str)
     }
 
     //% block="perform a measurement"
