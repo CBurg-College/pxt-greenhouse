@@ -1022,7 +1022,7 @@ namespace CBreedingBox {
                 str = MOISTURE.toString() + "%M"
                 break;
             case Measurement.Illuminance:
-                str = LIGHT.toString() + "%L"
+                str = LIGHT.toString() + "*"
                 break;
         }
         basic.showString(str)
