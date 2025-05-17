@@ -1227,7 +1227,7 @@ namespace CTimer {
 
     //% block="every %time hours"
     //% block.loc.nl="om de %time uren"
-    export function OnEveryHours(time: number, cb: () => void) {
+    export function OnEveryHr(time: number, cb: () => void) {
         const myTimerID3 = 200 + Math.randomRange(0, 100); // semi-unique
         const timerTimeout3 = 1;
 
