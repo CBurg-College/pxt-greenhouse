@@ -849,8 +849,8 @@ namespace DHT22 {
 
     let dataPin = DigitalPin.P14
 
-    export let TEMPERATURE: number = -999.0
-    export let HUMIDITY: number = -999.0
+    export let TEMPERATURE: number = 0
+    export let HUMIDITY: number = 0
     export let SUCCESS: boolean = false
 
     export function setPin(pin: DigitalPin) {
@@ -934,8 +934,8 @@ namespace CBreedingBox {
     let PIN_PUMP = DigitalPin.P16
 
     export let PUMP : number  = 0
-    export let MOISTURE: number = -999
-    export let LIGHT: number = -999
+    export let MOISTURE: number = 0
+    export let LIGHT: number = 0
 
     export enum State {
         //% block="on"
@@ -1086,7 +1086,7 @@ namespace CBreedingBox {
     //% block.loc.nl="luchtdruk"
     export function pressure(): number {
         if (SENSOR == Sensor.Bme280) return BME280.PRESSURE
-        return -1000
+        return 0 // value 0 means error
     }
 
     //% block="amount of light"
@@ -1113,21 +1113,21 @@ namespace CBreedingBox {
     //% block.loc.nl="vochtig"
     //% group="•"
     export function moisture2(): number {
-        return 70
+        return 65
     }
 
     //% block="wet"
     //% block.loc.nl="nat"
     //% group="•"
     export function moisture3(): number {
-        return 85
+        return 80
     }
 
     //% block="soaking"
     //% block.loc.nl="doornat"
     //% group="•"
     export function moisture4(): number {
-        return MOISTURE
+        return 95
     }
 
     //% block="moisture"
@@ -1139,17 +1139,21 @@ namespace CBreedingBox {
     //% block="humidity"
     //% block.loc.nl="luchtvochtigheid"
     export function humidity(): number {
-        if (SENSOR == Sensor.Bme280) return BME280.HUMIDITY
-        if (SENSOR == Sensor.Dht22) return DHT22.HUMIDITY
-        return -1000
+        let val = 0
+        if (SENSOR == Sensor.Bme280) val = BME280.HUMIDITY
+        if (SENSOR == Sensor.Dht22) val = DHT22.HUMIDITY
+        if (val < 0) return 0
+        return val // value 0 means error
     }
 
     //% block="temperature"
     //% block.loc.nl="temperatuur"
     export function temperature(): number {
-        if (SENSOR == Sensor.Bme280) return BME280.TEMPERATURE
-        if (SENSOR == Sensor.Dht22) return DHT22.TEMPERATURE
-        return -1000
+        let val = 0
+        if (SENSOR == Sensor.Bme280) val = BME280.TEMPERATURE
+        if (SENSOR == Sensor.Dht22) val = DHT22.TEMPERATURE
+        if (val < 0) return 0
+        return val // value 0 means error
     }
 }
 
