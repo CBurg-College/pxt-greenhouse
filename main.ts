@@ -1,3 +1,10 @@
+input.onButtonPressed(Button.A, function () {
+    CBreedingBox.pump(CBreedingBox.State.on)
+})
+input.onButtonPressed(Button.B, function () {
+    CBreedingBox.pump(CBreedingBox.State.off)
+})
+
 namespace ESP8266 {
     /*
     The ESP8266 code is copied from the ElecFreaks 'esp8266-iot.ts' library:
