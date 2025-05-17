@@ -1189,7 +1189,7 @@ namespace CTimer {
     //% block.loc.nl="om de %time seconden"
     export function OnEverySec(time: number, cb: () => void) {
         const myTimerID = 200 + Math.randomRange(0, 100); // semi-unique
-        const timerTimeout = 1;
+        const timerTimeout1 = 1;
 
         control.onEvent(myTimerID, 0, function () {
             control.inBackground(() => {
@@ -1199,8 +1199,8 @@ namespace CTimer {
 
         control.inBackground(() => {
             while (true) {
+                control.raiseEvent(myTimerID, timerTimeout1);
                 basic.pause(time * 1000);
-                control.raiseEvent(myTimerID, timerTimeout);
             }
         })
     }
@@ -1219,8 +1219,8 @@ namespace CTimer {
 
         control.inBackground(() => {
             while (true) {
-                basic.pause(time * 60000);
                 control.raiseEvent(myTimerID2, timerTimeout2);
+                basic.pause(time * 60000);
             }
         })
     }
@@ -1239,8 +1239,8 @@ namespace CTimer {
 
         control.inBackground(() => {
             while (true) {
-                basic.pause(time * 3600000);
                 control.raiseEvent(myTimerID3, timerTimeout3);
+                basic.pause(time * 3600000);
             }
         })
     }
