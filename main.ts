@@ -1074,8 +1074,8 @@ namespace CBreedingBox {
         }
     }
 
-    //% block="set the light color to %color with brightness %brightness"
-    //% block.loc.nl="stel de lichtkleur in op %color met helderheid %brightness"
+    //% block="set the light color to %color with brightness %brightness %"
+    //% block.loc.nl="stel de lichtkleur in op %color met helderheid %brightness %"
     //% brightness.min=0 brightness.max=100 brightness.defl=100
     export function setColor(color: Color, brightness: number) {
         NEOP.showColor(color);
@@ -1130,6 +1130,48 @@ namespace CBreedingBox {
         return 95
     }
 
+    //% block="dark"
+    //% block.loc.nl="donker"
+    //% group="•"
+    export function light0(): number {
+        return 25
+    }
+
+    //% block="dusk"
+    //% block.loc.nl="schemer"
+    //% group="•"
+    export function light1(): number {
+        return 50
+    }
+
+    //% block="lucid"
+    //% block.loc.nl="helder"
+    //% group="•"
+    export function light2(): number {
+        return 65
+    }
+
+    //% block="bright"
+    //% block.loc.nl="fel"
+    //% group="•"
+    export function light3(): number {
+        return 80
+    }
+
+    //% block="off"
+    //% block.loc.nl="uit"
+    //% group="•"
+    export function off(): number {
+        return 0
+    }
+
+    //% block="on"
+    //% block.loc.nl="aan"
+    //% group="•"
+    export function on(): number {
+        return 100
+    }
+
     //% block="moisture"
     //% block.loc.nl="grondvochtigheid"
     export function moisture(): number {
@@ -1157,7 +1199,7 @@ namespace CBreedingBox {
     }
 }
 
-//% color="#00CC00" icon="\uf1f9"
+//% color="#CCCC00" icon="\uf1f9"
 //% block="Time"
 //% block.loc.nl="Tijd"
 namespace CTimer {
@@ -1247,7 +1289,7 @@ namespace CTimer {
 
 }
 
-//% color="#00CC00" icon="\uf1f9"
+//% color="#FFCC00" icon="\uf1f9"
 //% block="Dashboard"
 //% block.loc.nl="Dashboard"
 namespace CDashboard {
@@ -1330,7 +1372,7 @@ namespace CDashboard {
     }
 }
 
-//% color="#00CC00" icon="\uf1f9"
+//% color="#FF8800" icon="\uf1f9"
 //% block="BarDiagram"
 //% block.loc.nl="Staafdiagram"
 namespace CBarDiagram {
