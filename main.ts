@@ -1204,14 +1204,14 @@ namespace CBreedingBox {
 //% block.loc.nl="Tijd"
 namespace CTimer {
 
-    //% block="wait %time sec"
-    //% block.loc.nl="wacht %time sec"
+    //% block="wait %time seconds"
+    //% block.loc.nl="wacht %time seconden"
     export function waitSec(time: number) {
         basic.pause(time * 1000);
     }
 
-    //% block="wait %time min"
-    //% block.loc.nl="wacht %time min"
+    //% block="wait %time minutes"
+    //% block.loc.nl="wacht %time minuten"
     export function waitMin(time: number) {
         basic.pause(time * 60000);
     }
