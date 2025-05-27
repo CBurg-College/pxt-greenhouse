@@ -1074,8 +1074,8 @@ namespace CBreedingBox {
         }
     }
 
-    //% block="set the light color to %color with brightness %brightness %"
-    //% block.loc.nl="stel de lichtkleur in op %color met helderheid %brightness %"
+    //% block="set the light color to %color with brightness %brightness \\%"
+    //% block.loc.nl="stel de lichtkleur in op %color met helderheid %brightness \\%"
     //% brightness.min=0 brightness.max=100 brightness.defl=100
     export function setColor(color: Color, brightness: number) {
         NEOP.showColor(color);
