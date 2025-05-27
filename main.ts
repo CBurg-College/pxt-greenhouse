@@ -1199,7 +1199,7 @@ namespace CBreedingBox {
     }
 }
 
-//% color="#CCCC00" icon="\uf1f9"
+//% color="#FF8800" icon="\uf1f9"
 //% block="Time"
 //% block.loc.nl="Tijd"
 namespace CTimer {
@@ -1372,7 +1372,7 @@ namespace CDashboard {
     }
 }
 
-//% color="#FF8800" icon="\uf1f9"
+//% color="#004488" icon="\uf1f9"
 //% block="BarDiagram"
 //% block.loc.nl="Staafdiagram"
 namespace CBarDiagram {
