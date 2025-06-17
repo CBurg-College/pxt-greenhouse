@@ -1050,7 +1050,7 @@ namespace CBreedingBox {
 
         // the moisture sensor gives values from 136 to 236
         // value 136 means fully soaken, 237 means fully dry
-        let valueS = pins.analogReadPin(PIN_SOIL) - 136
+        let valueS = pins.analogReadPin(PIN_SOIL)
 basic.showNumber( valueS)
         if (valueS < 0) valueS = 0
         if (valueS > 100) valueS = 100
