@@ -1050,11 +1050,12 @@ namespace CBreedingBox {
 
         // the moisture sensor gives values from 136 to 236
         // value 136 means fully soaken, 237 means fully dry
-        let valueS = pins.analogReadPin(PIN_SOIL)
-basic.showNumber( valueS)
-        if (valueS < 0) valueS = 0
-        if (valueS > 100) valueS = 100
-        MOISTURE = Math.round(100 - valueS)
+        let voltS = pins.analogReadPin(PIN_SOIL)
+        if (voltS < 300) voltS = 300
+        if (voltS > 750) voltS = 750
+        let valueS = 100 - pins.map(voltS, 300, 750, 0, 100)
+basic.showNumber(valueS)
+        MOISTURE = Math.round(valueS)
 
         switch (SENSOR) {
             case Sensor.Bme280: BME280.measure(); break;
