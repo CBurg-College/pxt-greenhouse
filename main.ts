@@ -1054,7 +1054,6 @@ namespace CBreedingBox {
         if (voltS < 300) voltS = 300
         if (voltS > 750) voltS = 750
         let valueS = 100 - pins.map(voltS, 300, 750, 0, 100)
-basic.showNumber(valueS)
         MOISTURE = Math.round(valueS)
 
         switch (SENSOR) {
