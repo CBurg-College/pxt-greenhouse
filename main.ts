@@ -100,7 +100,7 @@ namespace ESP8266 {
     }
 
     function restEsp8266() {
-basic.showNumber(8)
+
         sendAT("AT+RESTORE", 1000) // restore to factory settings
         sendAT("AT+RST", 1000) // rest
         serial.readString()
@@ -111,7 +111,7 @@ basic.showNumber(8)
     }
 
     function scanWIFIAP(ssid: string) {
-basic.showNumber(7)
+
         let scanflag = 0
         let mscnt = 0
         recvString = " "
@@ -162,7 +162,7 @@ basic.showNumber(7)
      * Initialize ESP8266 module
      */
     export function initWIFI(tx: SerialPin, rx: SerialPin, baudrate: BaudRate) {
-basic.showNumber(9)
+
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         basic.pause(100)
         serial.setTxBufferSize(128)
@@ -174,11 +174,10 @@ basic.showNumber(9)
      * connect to Wifi router
      */
     export function connectWifi(ssid: string, pw: string) {
-basic.showNumber( 0)
+
         while (1) {
             scanWIFIAP(ssid)
             if (scanWIFIAPFlag) {
-basic.showNumber( 1)
                 currentCmd = Cmd.ConnectWifi
                 sendAT(`AT+CWJAP="${ssid}","${pw}"`) // connect to Wifi router
                 control.waitForEvent(EspEventSource, EspEventValue.ConnectWifi)
@@ -189,7 +188,6 @@ basic.showNumber( 1)
                 }
                 break
             } else {
-basic.showNumber( 2)
                 restEsp8266()
                 currentCmd = Cmd.ConnectWifi
                 sendAT(`AT+CWJAP="${ssid}","${pw}"`)
@@ -199,7 +197,6 @@ basic.showNumber( 2)
                 }
             }
         }
-basic.showNumber( 3)
     }
 
     /**
@@ -214,7 +211,7 @@ basic.showNumber( 3)
      * Connect to ThingSpeak
      */
     export function connectThingSpeak() {
-basic.showNumber(4)
+
         thingspeak_connected = true
         // connect to server
         // recvString = " "
@@ -236,7 +233,7 @@ basic.showNumber(4)
      * Set data
      */
     export function setData(write_api_key: string, n1: number = 0, n2: number = 0, n3: number = 0, n4: number = 0, n5: number = 0, n6: number = 0, n7: number = 0, n8: number = 0) {
- basic.showNumber(6)
+
         TStoSendStr = "AT+HTTPCLIENT=2,0,\"http://api.thingspeak.com/update?api_key="
             + write_api_key
             + "&field1="
@@ -262,13 +259,12 @@ basic.showNumber(4)
      * upload data to ThingSpeak.
      */
     export function uploadData() {
-basic.showNumber(5)
+
         let mscnt2 = 0
         //sendAT(`AT+CIPSEND=${TStoSendStr.length + 2}`, 300)
         sendAT(TStoSendStr, 100) // upload data
 
         while (1) {
-
             recvString += serial.readString()
             basic.pause(1)
             mscnt2 += 1
