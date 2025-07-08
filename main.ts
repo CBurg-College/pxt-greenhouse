@@ -162,6 +162,7 @@ basic.showNumber(7)
      * Initialize ESP8266 module
      */
     export function initWIFI(tx: SerialPin, rx: SerialPin, baudrate: BaudRate) {
+basic.showNumber(9)
         serial.redirect(tx, rx, BaudRate.BaudRate115200)
         basic.pause(100)
         serial.setTxBufferSize(128)
